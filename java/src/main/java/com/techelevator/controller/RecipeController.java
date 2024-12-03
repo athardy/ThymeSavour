@@ -3,11 +3,10 @@ package com.techelevator.controller;
 import com.techelevator.dao.RecipeDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.model.Recipe;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import java.security.Principal;
@@ -36,5 +35,19 @@ public class RecipeController {
         int userId = userDao.getUserByUsername(username).getId(); //get username via userdao
 
         return recipeDao.getRecipesByUserId(userId); // return recipes created by this user
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createRecipe(@RequestBody Recipe recipe, Principal principal){
+        try {
+            String username = principal.getName();
+            int userId = userDao.getUserByUsername(username).getId();
+            recipe.setAuthor(userId);
+
+            recipeDao.createNewRecipe(recipe);
+            return  ResponseEntity.status(HttpStatus.CREATED).body("Recipe created!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+        }
     }
 }

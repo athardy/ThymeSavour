@@ -12,5 +12,5 @@ public interface RecipeDao {
 
     Recipe getRecipeByRecipeId(int id);
 
-    Recipe createNewRecipe();
+    void createNewRecipe(Recipe recipe);
 }

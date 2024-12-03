@@ -3,6 +3,7 @@
     <h1>Welcome, {{ user.username }}!</h1>
     <p>You are authenticated!</p>
     <button @click="goToMyRecipes">View My Recipes</button>
+    <button @click="goToCreateRecipe">Create New Recipe</button>
   </div>
 </template>
 
@@ -17,6 +18,9 @@ export default {
     goToMyRecipes() {
       this.$router.push({ name: "my-recipes" }); // Navigate to My Recipes view
     },
+    goToCreateRecipe() {
+      this.$router.push({name: "create"}); //Navigate to Recipe Creation view
+    }
   },
 };
 </script>

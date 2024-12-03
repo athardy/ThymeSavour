@@ -7,6 +7,7 @@ import LoginView from '../views/LoginView.vue';
 import LogoutView from '../views/LogoutView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import MyRecipesView from '../views/MyRecipesView.vue'; // Import MyRecipesView component
+import RecipeCreationView from '../views/RecipeCreationView.vue'; // Import recipe creation view
 
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
@@ -57,6 +58,11 @@ const routes = [
       requiresAuth: true, // Only accessible for logged-in users
     },
   },
+  {
+    path: '/create', // Route for creating a Recipe
+    name: 'create',
+    component: RecipeCreationView,
+  }
 ];
 
 // Create the router
