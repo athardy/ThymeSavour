@@ -1,6 +1,7 @@
 package com.techelevator.controller;
 
 import com.techelevator.dao.RecipeDao;
+import com.techelevator.dao.UserDao;
 import com.techelevator.model.Recipe;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,27 +15,26 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/recipes/")
-@PreAuthorize("isAuthenticated()") //this is a test
+@RequestMapping("/recipes")
+@PreAuthorize("isAuthenticated()")
 public class RecipeController {
 
-    private RecipeDao recipeDao;
+    private final RecipeDao recipeDao;
+    private final UserDao userDao;
 
-    public RecipeController(RecipeDao recipeDao) {
+    public RecipeController(RecipeDao recipeDao, UserDao userDao) {
         this.recipeDao = recipeDao;
+        this.userDao = userDao;
     }
 
-    int id = 1;
-
-    @PermitAll
     @GetMapping("/my-recipes")
-    public List<Recipe> getMyRecipes() {
+    @PermitAll
+    public List<Recipe> getMyRecipes(Principal principal) {
 
-        return recipeDao.getRecipesByUserId(id);
+        String username = principal.getName(); //getting username
+
+        int userId = userDao.getUserByUsername(username).getId(); //get username via userdao
+
+        return recipeDao.getRecipesByUserId(userId); // return recipes created by this user
     }
-
-//    private getUserIdByPrincipal(Principal principal) {
-//
-//    }
-
 }

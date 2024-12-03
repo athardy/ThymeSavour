@@ -1,11 +1,35 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
-    <p>You must be authenticated to see this</p>
+    <h1>Welcome, {{ user.username }}!</h1>
+    <p>You are authenticated!</p>
+    <button @click="goToMyRecipes">View My Recipes</button>
   </div>
 </template>
 
 <script>
 export default {
+  computed: {
+    user() {
+      return this.$store.state.user; // Fetch user info from Vuex store
+    },
+  },
+  methods: {
+    goToMyRecipes() {
+      this.$router.push({ name: "my-recipes" }); // Navigate to My Recipes view
+    },
+  },
 };
 </script>
+
+<style scoped>
+.home {
+  text-align: center;
+  margin-top: 2rem;
+}
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+</style>
