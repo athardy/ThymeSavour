@@ -40,6 +40,13 @@ public class JdbcRecipeDao implements RecipeDao {
         return null;
     }
 
+    @Override
+    public Recipe createNewRecipe(){
+        Recipe recipe = new Recipe();
+
+        return recipe;
+    }
+
     private Recipe mapRowToRecipe(SqlRowSet results) {
         Recipe recipe = new Recipe();
         recipe.setRecipe_id(results.getInt("recipe_id"));
