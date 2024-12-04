@@ -30,6 +30,7 @@ CREATE TABLE recipes (
   recipe_id SERIAL PRIMARY KEY,
   recipe_name VARCHAR(255) NOT NULL,
   description TEXT,
+  instructions TEXT NOT NULL,
   author INT REFERENCES users (user_id),
   date_added TIMESTAMP DEFAULT current_timestamp
 );

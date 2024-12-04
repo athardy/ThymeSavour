@@ -1,23 +1,28 @@
 package com.techelevator.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Recipe {
 
     private int recipe_id;
     private String recipe_name;
     private String description;
+    private String instructions;
     private int author;
     private Date date_added;
+    private List<Ingredient> ingredients;
 
-    public Recipe () {};
+    public Recipe() {};
 
-    public Recipe(int recipe_id, String recipe_name, String description, int author, Date date_added) {
+    public Recipe(int recipe_id, String recipe_name, String description, String instructions, int author, Date date_added, List<Ingredient> ingredients) {
         this.recipe_id = recipe_id;
         this.recipe_name = recipe_name;
         this.description = description;
+        this.instructions = instructions;
         this.author = author;
         this.date_added = date_added;
+        this.ingredients = ingredients;
     }
 
     public int getRecipe_id() {
@@ -58,5 +63,21 @@ public class Recipe {
 
     public void setDate_added(Date date_added) {
         this.date_added = date_added;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
     }
 }

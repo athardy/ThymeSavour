@@ -10,6 +10,10 @@
                 <label for="description">Description:</label>
                 <input id="description" v-model="recipe.description" placeholder="Enter description..." required />
             </div>
+            <div>
+                <label for="instructions">Preparation Instructions:</label>
+                <textarea name="" id="instructions" v-model="recipe.instructions" placeholder="Enter preparation instructions here" cols="68" rows="10" required></textarea>
+            </div>
             <button type="submit">Save Recipe</button>
         </form>
     </div>
@@ -24,6 +28,7 @@ export default{
             recipe: {
                 recipe_name: "",
                 description: "",
+                instructions: ""
             }
         }
     },
@@ -38,7 +43,7 @@ methods: {
           },
         });
             alert(response.data);//success message
-            this.recipe = {recipe_name: "", description: ""}; //reset form
+            this.recipe = {recipe_name: "", description: "", instructions: ""}; //reset form
             this.$router.push({name: "my-recipes"});
         } catch (error) {
             console.error("DIDN'T WORK DUH", error.response?.data || error.message);
@@ -61,7 +66,7 @@ label {
     margin-bottom: 5 px;
     font-weight: bold;
 }
-input {
+input, textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;

@@ -31,6 +31,6 @@ INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Garlic', (SELECT typ
 INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Olive Oil', (SELECT type_id FROM ingredient_type WHERE type_name = 'Other'));
 INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Parmesan Cheese', (SELECT type_id FROM ingredient_type WHERE type_name = 'Cheese'));
 
-INSERT INTO recipes (recipe_name, description, author) VALUES ('Spaghetti with Red Sauce', 'Cook spaghetti and add red sauce', '1' );
+INSERT INTO recipes (recipe_name, description, instructions, author) VALUES ('Spaghetti with Red Sauce', 'Classic Italian dish', 'Cook spaghetti and add red sauce', '1' );
 
 COMMIT TRANSACTION;

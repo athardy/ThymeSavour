@@ -3,6 +3,7 @@ package com.techelevator.controller;
 import com.techelevator.dao.RecipeDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.model.Recipe;
+import com.techelevator.model.RecipeIngredient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,4 +51,32 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
         }
     }
+
+    @GetMapping("/{recipeId}/ingredients")
+    public List<RecipeIngredient> getIngredientsForRecipe(@PathVariable int recipeId) {
+        return recipeDao.getIngredientsForRecipe(recipeId);
+    }
+
+    @PostMapping("/{recipeId}/ingredients")
+    public ResponseEntity<String> addIngredientsToRecipe(@PathVariable int recipeId, @RequestBody RecipeIngredient recipeIngredient ) {
+        try {
+            recipeIngredient.setRecipe_id(recipeId);
+            recipeDao.addIngredientToRecipe(recipeIngredient);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Ingredient added to recipe");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+         }
+    }
+
+    @PutMapping("/{recipeId}/ingredients")
+    public ResponseEntity<String> editIngredientsToRecipe(@PathVariable int recipeId, @RequestBody RecipeIngredient recipeIngredient) {
+        try {
+            recipeIngredient.setRecipe_id(recipeId);
+            recipeDao.editIngredientToRecipe(recipeId, recipeIngredient);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Edited ingredient in recipe");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+        }
+    }
+
 }

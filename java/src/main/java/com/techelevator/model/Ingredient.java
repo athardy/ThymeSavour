@@ -6,6 +6,8 @@ public class Ingredient {
     private String ingredient_name;
     private int type_id;
 
+    public Ingredient() {};
+
     public Ingredient(int ingredient_id, String ingredient_name, int type_id) {
         this.ingredient_id = ingredient_id;
         this.ingredient_name = ingredient_name;

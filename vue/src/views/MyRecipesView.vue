@@ -3,7 +3,9 @@
       <h1>My Recipes</h1>
       <ul>
         <li v-for="recipe in recipes" :key="recipe.recipe_id">
-          {{ recipe.recipe_name }}: {{ recipe.description }}
+          <h2>{{ recipe.recipe_name }}</h2>
+          <p><strong>Description: </strong>{{ recipe.description }}</p>
+          <p><strong>Preparation Instructions: </strong>{{ recipe.instructions }}</p>
         </li>
       </ul>
     </div>
