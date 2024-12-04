@@ -1,5 +1,6 @@
 package com.techelevator.dao;
 
+import com.techelevator.model.Ingredient;
 import com.techelevator.model.Recipe;
 import com.techelevator.model.RecipeIngredient;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,8 +21,16 @@ public class JdbcRecipeDao implements RecipeDao {
 
 
     @Override
-    public List<Recipe> getRecipes() {
-        return null;
+    public List<Recipe> getAllRecipes() {
+        String sql = "SELECT recipe_id, recipe_name, description, instructions, author, date_added FROM recipes";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Recipe(
+                rs.getInt("recipe_id"),
+                rs.getString("recipe_name"),
+                rs.getString("description"),
+                rs.getString("instructions"),
+                rs.getInt("author"),
+                rs.getDate("date_added")
+        ));
     }
 
     @Override

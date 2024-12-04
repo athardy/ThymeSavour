@@ -36,17 +36,30 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     @Override
-    public List<Ingredient> getIngredientByTypeId() {
-        return null;
+    public List<Ingredient> getIngredientByTypeId(int type_id) {
+        String sql = "SELECT ingredient_id, ingredient_name, type_id FROM ingredients WHERE type_id = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Ingredient(
+                rs.getInt("ingredient_id"),
+                rs.getString("ingredient_name"),
+                rs.getInt("type_id")
+        ), type_id);
     }
 
     @Override
-    public Ingredient getIngredientByName() {
-        return null;
+    public List<Ingredient> getIngredientsByName(String ingredientName) {
+        String sql = "SELECT ingredient_id, ingredient_name, type_id FROM ingredients WHERE ingredient_name ILIKE ?";
+        String searchTerm = "%" + ingredientName + "%";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Ingredient(
+                rs.getInt("ingredient_id"),
+                rs.getString("ingredient_name"),
+                rs.getInt("type_id")
+        ), searchTerm);
     }
 
     @Override
-    public Ingredient deleteIngredient() {
-        return null;
+    public void deleteIngredientById(int ingredient_id) {
+        String sql = "DELETE FROM ingredients WHERE ingredient_id = ?";
+        jdbcTemplate.update(sql, ingredient_id);
+
     }
 }

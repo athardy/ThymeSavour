@@ -10,10 +10,10 @@ public interface IngredientDao {
 
     List<Ingredient> getAllIngredients();
 
-    List<Ingredient> getIngredientByTypeId();
+    List<Ingredient> getIngredientByTypeId(int type_id);
 
-    Ingredient getIngredientByName();
+    List<Ingredient> getIngredientsByName(String ingredientName);
 
-    Ingredient deleteIngredient();
+    void deleteIngredientById(int ingredient_id);
 
 }

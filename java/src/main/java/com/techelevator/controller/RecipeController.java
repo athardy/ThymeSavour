@@ -27,6 +27,11 @@ public class RecipeController {
         this.userDao = userDao;
     }
 
+    @GetMapping("/all")
+    public List<Recipe> getAllRecipes() {
+        return recipeDao.getAllRecipes();
+    }
+
     @GetMapping("/my-recipes")
     @PermitAll
     public List<Recipe> getMyRecipes(Principal principal) {

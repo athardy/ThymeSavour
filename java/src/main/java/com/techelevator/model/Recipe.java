@@ -11,18 +11,18 @@ public class Recipe {
     private String instructions;
     private int author;
     private Date date_added;
-    private List<Ingredient> ingredients;
+//    private List<Ingredient> ingredients;
 
     public Recipe() {};
 
-    public Recipe(int recipe_id, String recipe_name, String description, String instructions, int author, Date date_added, List<Ingredient> ingredients) {
+    public Recipe(int recipe_id, String recipe_name, String description, String instructions, int author, Date date_added) {
         this.recipe_id = recipe_id;
         this.recipe_name = recipe_name;
         this.description = description;
         this.instructions = instructions;
         this.author = author;
         this.date_added = date_added;
-        this.ingredients = ingredients;
+//        this.ingredients = ingredients;
     }
 
     public int getRecipe_id() {
@@ -73,11 +73,11 @@ public class Recipe {
         this.instructions = instructions;
     }
 
-    public List<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }
+//    public List<Ingredient> getIngredients() {
+//        return ingredients;
+//    }
+//
+//    public void setIngredients(List<Ingredient> ingredients) {
+//        this.ingredients = ingredients;
+//    }
 }
