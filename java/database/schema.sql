@@ -55,6 +55,9 @@ CREATE TABLE recipe_ingredient (
   unit VARCHAR(50)
 );
 -- Create meal_plan table
+
+-- make meal_plan table Pural (meal_plans) at some point, maybe...
+
 CREATE TABLE meal_plan (
   meal_plan_id SERIAL PRIMARY KEY,
   meal_plan_name VARCHAR(200) NOT NULL,

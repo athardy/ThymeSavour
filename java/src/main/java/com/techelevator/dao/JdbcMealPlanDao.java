@@ -5,6 +5,7 @@ import com.techelevator.model.MealPlan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.List;
 
 @Component
@@ -15,7 +16,7 @@ public class JdbcMealPlanDao implements MealPlanDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override //add principal to the method to pass in user id
+    @Override
     public void createMealPlan(MealPlan mealPlan) {
     String sql = "INSERT INTO meal_plan (meal_plan_name, user_id, start_date, end_date) VALUES(?, ?, ?, ?)";
     jdbcTemplate.update(sql, mealPlan.getMeal_plan_name(), mealPlan.getUser_id(), mealPlan.getStart_date(), mealPlan.getEnd_date());
@@ -23,7 +24,15 @@ public class JdbcMealPlanDao implements MealPlanDao {
 
     @Override
     public List<MealPlan> getAllMealPlans() {
-        return null;
+        String sql = "SELECT meal_plan_id, meal_plan_name, user_id, creation_date, start_date, end_date FROM meal_plan";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new MealPlan(
+                rs.getInt("meal_plan_id"),
+                rs.getString("meal_plan_name"),
+                rs.getInt("user_id"),
+                rs.getDate("creation_date"),
+                rs.getDate("start_date"),
+                rs.getDate("end_date")
+        ));
     }
 
     @Override
