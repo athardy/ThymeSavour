@@ -20,4 +20,7 @@ public interface RecipeDao {
     void addIngredientToRecipe(RecipeIngredient recipeIngredient);
 
     void editIngredientToRecipe(int id, RecipeIngredient recipeIngredient);
+
+    void deleteRecipeById(int recipe_id);
+
 }

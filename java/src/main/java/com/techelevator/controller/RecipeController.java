@@ -73,12 +73,22 @@ public class RecipeController {
          }
     }
 
-    @PutMapping("/{recipeId}/ingredients")
-    public ResponseEntity<String> editIngredientsToRecipe(@PathVariable int recipeId, @RequestBody RecipeIngredient recipeIngredient) {
+    @PutMapping("/{Id}/ingredients") //use the PK (id) as the path variable
+    public ResponseEntity<String> editIngredientsToRecipe(@PathVariable int id, @RequestBody RecipeIngredient recipeIngredient) {
         try {
-            recipeIngredient.setRecipe_id(recipeId);
-            recipeDao.editIngredientToRecipe(recipeId, recipeIngredient);
+            recipeIngredient.setRecipe_id(id);
+            recipeDao.editIngredientToRecipe(id, recipeIngredient);
             return ResponseEntity.status(HttpStatus.CREATED).body("Edited ingredient in recipe");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{recipe_id}")
+    public ResponseEntity<String> deleteRecipeById(@PathVariable int recipe_id){
+        try {
+            recipeDao.deleteRecipeById(recipe_id);
+            return ResponseEntity.status(HttpStatus.OK).body("Recipe deleted!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
         }
