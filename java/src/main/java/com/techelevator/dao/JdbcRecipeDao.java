@@ -54,9 +54,9 @@ public class JdbcRecipeDao implements RecipeDao {
     }
 
     @Override
-    public void createNewRecipe(Recipe recipe){
-        String sql = "INSERT INTO recipes (recipe_name, description, instructions, author) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, recipe.getRecipe_name(), recipe.getDescription(), recipe.getInstructions(), recipe.getAuthor());
+    public int createNewRecipe(Recipe recipe){
+        String sql = "INSERT INTO recipes (recipe_name, description, instructions, author) VALUES (?, ?, ?, ?) RETURNING recipe_id";
+        return jdbcTemplate.queryForObject(sql, Integer.class,  recipe.getRecipe_name(), recipe.getDescription(), recipe.getInstructions(), recipe.getAuthor());
     }
 
     @Override //changed needs ByRecipeId

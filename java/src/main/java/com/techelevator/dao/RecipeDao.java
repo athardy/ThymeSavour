@@ -13,7 +13,7 @@ public interface RecipeDao {
 
     Recipe getRecipeById(int id); //renamed
 
-    void createNewRecipe(Recipe recipe);
+    int createNewRecipe(Recipe recipe);
 
     List<RecipeIngredient> getIngredientsForRecipe(int recipeId);
 
