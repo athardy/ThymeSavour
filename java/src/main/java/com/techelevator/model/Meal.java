@@ -10,6 +10,14 @@ public class Meal {
     private Date meal_date;
     private String meal_type;
 
+    public Meal(int meal_id, int meal_plan_id, int recipe_id, Date meal_date, String meal_type) {
+        this.meal_id = meal_id;
+        this.meal_plan_id = meal_plan_id;
+        this.recipe_id = recipe_id;
+        this.meal_date = meal_date;
+        this.meal_type = meal_type;
+    }
+
     public int getMeal_id() {
         return meal_id;
     }

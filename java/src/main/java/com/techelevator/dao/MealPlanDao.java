@@ -14,6 +14,7 @@ public interface MealPlanDao {
     List<MealPlan> getMealPlansByUserId(int user_id);
 
     MealPlan getMealPlanById(int meal_plan_id);
+    List<Meal> getRecipesForMealPlan(int meal_plan_id);
 
     void updateMealPlan(int meal_plan_id, MealPlan mealPlan); //changed input
 

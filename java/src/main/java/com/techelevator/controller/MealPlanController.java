@@ -45,10 +45,22 @@ public class MealPlanController {
     }
 
     //need a method for this specific endpoint
-    @GetMapping("{meal_plan_id}/recipes")
+    @GetMapping("{meal_plan_id}/meals")
     public List<Meal> getRecipesForMealPlan(@PathVariable int meal_plan_id) {
-        return null;
+        return mealPlanDao.getRecipesForMealPlan(meal_plan_id);
     }
+
+    @PostMapping("{meal_plan_id}/meals")
+    public ResponseEntity<String> addRecipeToMealPlan(@PathVariable int meal_plan_id, @RequestBody Meal meal) {
+        try {
+            meal.setMeal_plan_id(meal_plan_id);
+            mealPlanDao.addRecipeToMealPlan(meal);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Recipe added to meal plan!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+        }
+    }
+
 
     //added
     @DeleteMapping("/delete/{meal_plan_id}")

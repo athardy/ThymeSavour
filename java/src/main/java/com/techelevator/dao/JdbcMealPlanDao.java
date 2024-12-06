@@ -55,6 +55,18 @@ public class JdbcMealPlanDao implements MealPlanDao {
 
     }
 
+    @Override
+    public List<Meal> getRecipesForMealPlan(int meal_plan_id) {
+        String sql = "SELECT meal_id, meal_plan_id, recipe_id, meal_date, meal_type FROM meals WHERE meal_plan_id = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Meal(
+                rs.getInt("meal_id"),
+                rs.getInt("meal_plan_id"),
+                rs.getInt("recipe_id"),
+                rs.getDate("meal_date"),
+                rs.getString("meal_type")
+        ), meal_plan_id);
+    }
+
     @Override //needs ById and changed input
     public void updateMealPlan(int meal_plan_id, MealPlan mealPlan) {
         String sql = "INSERT INTO meal_plan (meal_plan_name, user_id, start_date, end_date) VALUES (?, ?, ?, ?) WHERE meal_plan_id = ?";
