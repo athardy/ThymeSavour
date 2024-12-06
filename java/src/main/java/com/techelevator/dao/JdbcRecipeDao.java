@@ -1,6 +1,7 @@
 package com.techelevator.dao;
 
 import com.techelevator.model.Ingredient;
+import com.techelevator.model.MealPlan;
 import com.techelevator.model.Recipe;
 import com.techelevator.model.RecipeIngredient;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,21 +34,23 @@ public class JdbcRecipeDao implements RecipeDao {
         ));
     }
 
-    @Override
+    @Override //changed
     public List<Recipe> getRecipesByUserId(int id) {
-        List<Recipe> recipes = new ArrayList<>();
         String sql = "SELECT recipe_id, recipe_name, description, instructions, author, date_added FROM recipes WHERE author = ?";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
-        while(results.next()) {
-            Recipe recipe = mapRowToRecipe(results);
-            recipes.add(recipe);
-        }
-        return recipes;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Recipe(
+                rs.getInt("recipe_id"),
+                rs.getString("recipe_name"),
+                rs.getString("description"),
+                rs.getString("instructions"),
+                rs.getInt("author"),
+                rs.getDate("date_added")
+        ), id);
     }
 
-    @Override
-    public Recipe getRecipeByRecipeId(int id) {
-        return null;
+    @Override //added and changed name
+    public Recipe getRecipeById(int id) {
+        String sql = "SELECT recipe_id, recipe_name, description, instructions, author, date_added FROM recipes WHERE recipe_id = ?";
+        return jdbcTemplate.queryForObject(sql, Recipe.class, id);
     }
 
     @Override
@@ -56,17 +59,16 @@ public class JdbcRecipeDao implements RecipeDao {
         jdbcTemplate.update(sql, recipe.getRecipe_name(), recipe.getDescription(), recipe.getInstructions(), recipe.getAuthor());
     }
 
-    @Override
+    @Override //changed needs ByRecipeId
     public List<RecipeIngredient> getIngredientsForRecipe(int recipeId) {
-        List<RecipeIngredient> ingredients = new ArrayList<>();
         String sql = "SELECT id, recipe_id, ingredient_id, quantity, unit FROM recipe_ingredient WHERE recipe_id = ?";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, recipeId);
-
-        while (results.next()) {
-            RecipeIngredient ingredient = mapRowToRecipeIngredient(results);
-            ingredients.add(ingredient);
-        }
-        return ingredients;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecipeIngredient(
+                rs.getInt("id"),
+                rs.getInt("recipe_id"),
+                rs.getInt("ingredient_id"),
+                rs.getDouble("quantity"),
+                rs.getString("unit")
+        ), recipeId);
     }
 
     @Override
@@ -75,8 +77,8 @@ public class JdbcRecipeDao implements RecipeDao {
         jdbcTemplate.update(sql, recipeIngredient.getRecipe_id(), recipeIngredient.getIngredient_id(), recipeIngredient.getQuantity(), recipeIngredient.getUnit());
     }
 
-    @Override
-    public void editIngredientToRecipe(int id, RecipeIngredient recipeIngredient) {
+    @Override //renamed
+    public void editIngredientToRecipeById(int id, RecipeIngredient recipeIngredient) {
         String sql = "UPDATE recipe_ingredient SET ingredient_id = ?, quantity = ?, unit = ? WHERE id = ?";
         jdbcTemplate.update(sql, recipeIngredient.getIngredient_id(), recipeIngredient.getQuantity(), recipeIngredient.getUnit(), id);
     }
@@ -88,28 +90,5 @@ public class JdbcRecipeDao implements RecipeDao {
         String deleteRecipeSql = "DELETE FROM recipes WHERE recipe_id = ?";
         jdbcTemplate.update(deleteRecipeSql, recipe_id);
     }
-
-
-
-    private Recipe mapRowToRecipe(SqlRowSet results) {
-        Recipe recipe = new Recipe();
-        recipe.setRecipe_id(results.getInt("recipe_id"));
-        recipe.setRecipe_name(results.getString("recipe_name"));
-        recipe.setDescription(results.getString("description"));
-        recipe.setInstructions(results.getString("instructions"));
-        recipe.setAuthor(results.getInt("author"));
-        recipe.setDate_added(results.getTimestamp("date_added"));
-        return recipe;
-    }
-
-    private RecipeIngredient mapRowToRecipeIngredient(SqlRowSet results) {
-        RecipeIngredient recipeIngredient = new RecipeIngredient();
-        recipeIngredient.setId(results.getInt("id"));
-        recipeIngredient.setRecipe_id(results.getInt("recipe_id"));
-        recipeIngredient.setIngredient_id(results.getInt("ingredient_id"));
-        recipeIngredient.setQuantity(results.getDouble("quantity"));
-        recipeIngredient.setUnit(results.getString("unit"));
-        return recipeIngredient;
-    }
-
+    // deleted mapping methods
 }

@@ -2,6 +2,7 @@ package com.techelevator.controller;
 
 import com.techelevator.dao.MealPlanDao;
 import com.techelevator.dao.UserDao;
+import com.techelevator.model.Meal;
 import com.techelevator.model.MealPlan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,22 @@ public class MealPlanController {
         return mealPlanDao.getAllMealPlans();
     }
 
+    //need a method for this specific endpoint
+    @GetMapping("{meal_plan_id}/recipes")
+    public List<Meal> getRecipesForMealPlan(@PathVariable int meal_plan_id) {
+        return null;
+    }
 
+    //added
+    @DeleteMapping("/delete/{meal_plan_id}")
+    public ResponseEntity<String> deleteMealPlanById(@PathVariable int meal_plan_id) {
+        try {
+            mealPlanDao.deleteMealPlan(meal_plan_id);
+            return ResponseEntity.status(HttpStatus.OK).body("Meal plan deleted!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+        }
+    }
 
 
 }

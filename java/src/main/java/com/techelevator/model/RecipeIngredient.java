@@ -8,13 +8,13 @@ public class RecipeIngredient {
     private double quantity;
     private String unit;
 
-//    public RecipeIngredient(int id, int recipe_id, int ingredient_id, double quantity, String unit) {
-//        this.id = id;
-//        this.recipe_id = recipe_id;
-//        this.ingredient_id = ingredient_id;
-//        this.quantity = quantity;
-//        this.unit = unit;
-//    }
+    public RecipeIngredient(int id, int recipe_id, int ingredient_id, double quantity, String unit) {
+        this.id = id;
+        this.recipe_id = recipe_id;
+        this.ingredient_id = ingredient_id;
+        this.quantity = quantity;
+        this.unit = unit;
+    }
 
     public int getId() {
         return id;

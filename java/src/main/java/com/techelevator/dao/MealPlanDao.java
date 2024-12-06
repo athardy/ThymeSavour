@@ -15,7 +15,7 @@ public interface MealPlanDao {
 
     MealPlan getMealPlanById(int meal_plan_id);
 
-    void updateMealPlan(MealPlan mealPlan);
+    void updateMealPlan(int meal_plan_id, MealPlan mealPlan); //changed input
 
     void addRecipeToMealPlan(Meal meal);
 

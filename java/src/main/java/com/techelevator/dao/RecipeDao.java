@@ -11,7 +11,7 @@ public interface RecipeDao {
 
     List<Recipe> getRecipesByUserId(int id);
 
-    Recipe getRecipeByRecipeId(int id);
+    Recipe getRecipeById(int id); //renamed
 
     void createNewRecipe(Recipe recipe);
 
@@ -19,7 +19,7 @@ public interface RecipeDao {
 
     void addIngredientToRecipe(RecipeIngredient recipeIngredient);
 
-    void editIngredientToRecipe(int id, RecipeIngredient recipeIngredient);
+    void editIngredientToRecipeById(int id, RecipeIngredient recipeIngredient);
 
     void deleteRecipeById(int recipe_id);
 

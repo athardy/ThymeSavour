@@ -70,14 +70,14 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Ingredient added to recipe");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
-         }
+        }
     }
 
-    @PutMapping("/{Id}/ingredients") //use the PK (id) as the path variable
+    @PutMapping("/{Id}/ingredients") //use the PK (id) as the path variable //changed method name to match previous change
     public ResponseEntity<String> editIngredientsToRecipe(@PathVariable int id, @RequestBody RecipeIngredient recipeIngredient) {
         try {
             recipeIngredient.setRecipe_id(id);
-            recipeDao.editIngredientToRecipe(id, recipeIngredient);
+            recipeDao.editIngredientToRecipeById(id, recipeIngredient);
             return ResponseEntity.status(HttpStatus.CREATED).body("Edited ingredient in recipe");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
