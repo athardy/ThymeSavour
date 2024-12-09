@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.security.PermitAll;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -44,18 +45,35 @@ public class RecipeController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createRecipe(@RequestBody Recipe recipe, Principal principal){
-        try {
-            String username = principal.getName();
-            int userId = userDao.getUserByUsername(username).getId();
-            recipe.setAuthor(userId);
+public ResponseEntity<?> createRecipe(@RequestBody Recipe recipe, Principal principal) {
+    try {
+        String username = principal.getName();
+        int userId = userDao.getUserByUsername(username).getId();
+        recipe.setAuthor(userId);
 
-            recipeDao.createNewRecipe(recipe);
-            return  ResponseEntity.status(HttpStatus.CREATED).body("Recipe created!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+        int recipeId = recipeDao.createNewRecipe(recipe);
+        System.out.println("Created recipe ID: " + recipeId);
+
+        for (RecipeIngredient ingredient : recipe.getIngredients()) {
+            if (ingredient.getIngredient_name() == null || ingredient.getIngredient_name().isEmpty()) {
+                throw new IllegalArgumentException("Ingredient name cannot be null or empty.");
+            }
+            ingredient.setRecipe_id(recipeId);
+            System.out.println("Adding ingredient: " + ingredient);
+            recipeDao.addIngredientToRecipe(ingredient);
         }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+            "message", "Recipe created!",
+            "recipeId", recipeId
+        ));
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
     }
+}
 
     @GetMapping("/{recipeId}/ingredients")
     public List<RecipeIngredient> getIngredientsForRecipe(@PathVariable int recipeId) {

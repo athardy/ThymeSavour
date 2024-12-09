@@ -5,8 +5,11 @@
 <script>
 export default {
   created() {
+    // Clear the user's authentication data
     this.$store.commit("LOGOUT");
-    this.$router.push("/login");
+
+    // Redirect to the landing page instead of the login page
+    this.$router.push({ name: "landing" });
   }
 };
 </script>

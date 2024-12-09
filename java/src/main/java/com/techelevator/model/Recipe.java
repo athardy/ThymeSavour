@@ -11,7 +11,7 @@ public class Recipe {
     private String instructions;
     private int author;
     private Date date_added;
-//    private List<Ingredient> ingredients;
+    private List<RecipeIngredient> ingredients;
 
     public Recipe() {};
 
@@ -22,7 +22,7 @@ public class Recipe {
         this.instructions = instructions;
         this.author = author;
         this.date_added = date_added;
-//        this.ingredients = ingredients;
+       this.ingredients = ingredients;
     }
 
     public int getRecipe_id() {
@@ -73,11 +73,11 @@ public class Recipe {
         this.instructions = instructions;
     }
 
-//    public List<Ingredient> getIngredients() {
-//        return ingredients;
-//    }
-//
-//    public void setIngredients(List<Ingredient> ingredients) {
-//        this.ingredients = ingredients;
-//    }
+    public List<RecipeIngredient> getIngredients() {
+        return ingredients;
+    }
+    
+    public void setIngredients(List<RecipeIngredient> ingredients) {
+        this.ingredients = ingredients;
+    }
 }

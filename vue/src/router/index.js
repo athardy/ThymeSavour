@@ -8,18 +8,27 @@ import LogoutView from '../views/LogoutView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import MyRecipesView from '../views/MyRecipesView.vue'; // Import MyRecipesView component
 import RecipeCreationView from '../views/RecipeCreationView.vue'; // Import recipe creation view
+import LandingPageView from '../views/LandingPageView.vue';
 
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
  * inside of App.vue depending on the URL.
  *
  * It also is used to detect whether or not a route requires the user to have first authenticated.
- * If the user has not yet authenticated (and needs to) they are redirected to /login
+ * If the user has not yet authenticated (and needs to) they are redirected to /login.
  * If they have (or don't need to) they're allowed to go about their way.
  */
 const routes = [
   {
     path: '/',
+    name: 'landing',
+    component: LandingPageView,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/home',
     name: 'home',
     component: HomeView,
     meta: {
@@ -62,7 +71,10 @@ const routes = [
     path: '/create', // Route for creating a Recipe
     name: 'create',
     component: RecipeCreationView,
-  }
+    meta: {
+      requiresAuth: true, // Only accessible for logged-in users
+    },
+  },
 ];
 
 // Create the router
@@ -71,18 +83,23 @@ const router = createRouter({
   routes: routes,
 });
 
-router.beforeEach((to) => {
-  // Get the Vuex store
+router.beforeEach((to, from, next) => {
   const store = useStore();
 
-  // Determine if the route requires Authentication
-  const requiresAuth = to.matched.some((x) => x.meta.requiresAuth);
+  const requiresAuth = to.matched.some((route) => route.meta.requiresAuth);
 
-  // If it does and they are not logged in, send the user to "/login"
-  if (requiresAuth && store.state.token === '') {
-    return { name: 'login' };
+  // If trying to access a protected route without being logged in
+  if (requiresAuth && !store.state.token) {
+    return next({ name: 'login' });
   }
-  // Otherwise, do nothing and they'll go to their next destination
+
+  // Redirect logged-in users away from the landing page
+  if (to.name === 'landing' && store.state.token) {
+    return next({ name: 'home' });
+  }
+
+  // Proceed as normal
+  next();
 });
 
 export default router;

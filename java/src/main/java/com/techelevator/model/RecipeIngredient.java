@@ -7,6 +7,7 @@ public class RecipeIngredient {
     private int ingredient_id;
     private double quantity;
     private String unit;
+    private String ingredient_name; 
 
     public RecipeIngredient(int id, int recipe_id, int ingredient_id, double quantity, String unit) {
         this.id = id;
@@ -54,5 +55,13 @@ public class RecipeIngredient {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public String getIngredient_name() {
+        return ingredient_name;
+    }
+
+    public void setIngredient_name(String ingredient_name) { 
+        this.ingredient_name = ingredient_name;
     }
 }

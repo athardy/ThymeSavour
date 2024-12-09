@@ -59,23 +59,58 @@ public class JdbcRecipeDao implements RecipeDao {
         return jdbcTemplate.queryForObject(sql, Integer.class,  recipe.getRecipe_name(), recipe.getDescription(), recipe.getInstructions(), recipe.getAuthor());
     }
 
-    @Override //changed needs ByRecipeId
-    public List<RecipeIngredient> getIngredientsForRecipe(int recipeId) {
-        String sql = "SELECT id, recipe_id, ingredient_id, quantity, unit FROM recipe_ingredient WHERE recipe_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecipeIngredient(
-                rs.getInt("id"),
-                rs.getInt("recipe_id"),
-                rs.getInt("ingredient_id"),
-                rs.getDouble("quantity"),
-                rs.getString("unit")
-        ), recipeId);
+    @Override
+public List<RecipeIngredient> getIngredientsForRecipe(int recipeId) {
+    String sql = "SELECT ri.id, " +
+                 "       ri.recipe_id, " +
+                 "       ri.ingredient_id, " +
+                 "       ri.quantity, " +
+                 "       ri.unit, " +
+                 "       i.ingredient_name " +
+                 "FROM recipe_ingredient ri " +
+                 "JOIN ingredients i ON ri.ingredient_id = i.ingredient_id " +
+                 "WHERE ri.recipe_id = ?"; 
+    return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        RecipeIngredient ingredient = new RecipeIngredient(
+            rs.getInt("id"),
+            rs.getInt("recipe_id"),
+            rs.getInt("ingredient_id"),
+            rs.getDouble("quantity"),
+            rs.getString("unit")
+        );
+        ingredient.setIngredient_name(rs.getString("ingredient_name"));
+        return ingredient;
+    }, recipeId);
+}
+
+@Override
+public void addIngredientToRecipe(RecipeIngredient recipeIngredient) {
+    Integer ingredientId = recipeIngredient.getIngredient_id();
+    if (ingredientId == null || ingredientId == 0) {
+        // Check if ingredient exists by name
+        String checkIngredientSql = "SELECT ingredient_id FROM ingredients WHERE ingredient_name = ?";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(checkIngredientSql, recipeIngredient.getIngredient_name());
+        
+        if (result.next()) {
+            ingredientId = result.getInt("ingredient_id");
+        } else {
+            // Insert the new ingredient and get the ID
+            String insertIngredientSql = "INSERT INTO ingredients (ingredient_name) VALUES (?) RETURNING ingredient_id";
+            ingredientId = jdbcTemplate.queryForObject(insertIngredientSql, Integer.class, recipeIngredient.getIngredient_name());
+        }
+
+        recipeIngredient.setIngredient_id(ingredientId);
     }
 
-    @Override
-    public void addIngredientToRecipe(RecipeIngredient recipeIngredient) {
-        String sql = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES (?, ?, ?, ?) ";
-        jdbcTemplate.update(sql, recipeIngredient.getRecipe_id(), recipeIngredient.getIngredient_id(), recipeIngredient.getQuantity(), recipeIngredient.getUnit());
-    }
+    // Insert into recipe_ingredient table
+    String sql = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES (?, ?, ?, ?)";
+    jdbcTemplate.update(sql, 
+        recipeIngredient.getRecipe_id(), 
+        recipeIngredient.getIngredient_id(), 
+        recipeIngredient.getQuantity(), 
+        recipeIngredient.getUnit()
+    );
+}
 
     @Override //renamed
     public void editIngredientToRecipeById(int id, RecipeIngredient recipeIngredient) {
