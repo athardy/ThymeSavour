@@ -1,9 +1,11 @@
 package com.techelevator.controller;
 
 import com.techelevator.dao.MealPlanDao;
+import com.techelevator.dao.RecipeDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.model.Meal;
 import com.techelevator.model.MealPlan;
+import com.techelevator.model.Recipe;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,10 +21,13 @@ import java.util.List;
 public class MealPlanController {
     private final MealPlanDao mealPlanDao;
     private final UserDao userDao;
+    private  final RecipeDao recipeDao;
 
-    public MealPlanController(MealPlanDao mealPlanDao, UserDao userDao) {
+    public MealPlanController(MealPlanDao mealPlanDao, UserDao userDao, RecipeDao recipeDao) {
         this.mealPlanDao = mealPlanDao;
         this.userDao = userDao;
+
+        this.recipeDao = recipeDao;
     }
 
     @PostMapping("/create") //add principal to the method to pass in user id
@@ -72,6 +77,25 @@ public class MealPlanController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
         }
     }
+
+
+    @PostMapping("/{meal_plan_id}/add-random-recipe")
+    public ResponseEntity<String> addRandomRecipeToMealPlan(@PathVariable int meal_plan_id) {
+        try {
+            // Step 1: Get a random recipe
+            Recipe randomRecipe = recipeDao.getRandomRecipe();
+
+            // Step 2: Add the recipe to the meal plan
+            mealPlanDao.addRandomRecipeToMealPlan(meal_plan_id, randomRecipe.getRecipe_id());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Random recipe added to meal plan!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+
 
 
 }

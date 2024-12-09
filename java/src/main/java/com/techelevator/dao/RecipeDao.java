@@ -13,6 +13,8 @@ public interface RecipeDao {
 
     Recipe getRecipeById(int id); //renamed
 
+    List<Recipe> getRecipesByIngredientId(int ingredientId);
+
     int createNewRecipe(Recipe recipe);
 
     List<RecipeIngredient> getIngredientsForRecipe(int recipeId);
@@ -22,5 +24,7 @@ public interface RecipeDao {
     void editIngredientToRecipeById(int id, RecipeIngredient recipeIngredient);
 
     void deleteRecipeById(int recipe_id);
+
+    public Recipe getRandomRecipe();
 
 }

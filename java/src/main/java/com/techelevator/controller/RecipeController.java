@@ -112,4 +112,24 @@ public ResponseEntity<?> createRecipe(@RequestBody Recipe recipe, Principal prin
         }
     }
 
+    @GetMapping("/by-ingredient/{ingredientId}")
+    public List<Recipe> getRecipesByIngredientId(@PathVariable int ingredientId){
+        return recipeDao.getRecipesByIngredientId(ingredientId);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

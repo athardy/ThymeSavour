@@ -19,6 +19,7 @@ public interface MealPlanDao {
     void updateMealPlan(int meal_plan_id, MealPlan mealPlan); //changed input
 
     void addRecipeToMealPlan(Meal meal);
+    public void addRandomRecipeToMealPlan(int mealPlanId, int recipeId);
 
     void editRecipeToMealPlan(int meal_plan_id, Meal meal);
 

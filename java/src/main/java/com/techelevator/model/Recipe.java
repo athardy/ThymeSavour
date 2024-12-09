@@ -22,7 +22,7 @@ public class Recipe {
         this.instructions = instructions;
         this.author = author;
         this.date_added = date_added;
-       this.ingredients = ingredients;
+        this.ingredients = ingredients;
     }
 
     public int getRecipe_id() {
@@ -76,8 +76,11 @@ public class Recipe {
     public List<RecipeIngredient> getIngredients() {
         return ingredients;
     }
-    
+
     public void setIngredients(List<RecipeIngredient> ingredients) {
         this.ingredients = ingredients;
     }
+
+
+
 }

@@ -3,6 +3,7 @@ package com.techelevator.dao;
 import com.techelevator.model.Meal;
 import com.techelevator.model.MealPlan;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -77,6 +78,13 @@ public class JdbcMealPlanDao implements MealPlanDao {
     public void addRecipeToMealPlan(Meal meal) {
         String sql = "INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, meal.getMeal_plan_id(), meal.getRecipe_id(), meal.getMeal_date(), meal.getMeal_type());
+    }
+
+    // JdbcMealPlanDao.java
+    @Override
+    public void addRandomRecipeToMealPlan(int mealPlanId, int recipeId) {
+        String sql = "INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES (?, ?, CURRENT_DATE, 'Random')";
+        jdbcTemplate.update(sql, mealPlanId, recipeId);
     }
 
     @Override //needs ById
