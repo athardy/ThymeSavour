@@ -1,16 +1,17 @@
 package com.techelevator.model;
 
 import java.util.Date;
+import java.time.LocalDate;
 
 public class Meal {
 
     private int meal_id;
     private int meal_plan_id;
     private int recipe_id;
-    private Date meal_date;
+    private LocalDate meal_date;
     private String meal_type;
 
-    public Meal(int meal_id, int meal_plan_id, int recipe_id, Date meal_date, String meal_type) {
+    public Meal(int meal_id, int meal_plan_id, int recipe_id, LocalDate meal_date, String meal_type) {
         this.meal_id = meal_id;
         this.meal_plan_id = meal_plan_id;
         this.recipe_id = recipe_id;
@@ -42,11 +43,11 @@ public class Meal {
         this.recipe_id = recipe_id;
     }
 
-    public Date getMeal_date() {
+    public LocalDate getMeal_date() {
         return meal_date;
     }
 
-    public void setMeal_date(Date meal_date) {
+    public void setMeal_date(LocalDate meal_date) {
         this.meal_date = meal_date;
     }
 

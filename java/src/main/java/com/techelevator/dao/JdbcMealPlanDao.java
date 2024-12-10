@@ -63,7 +63,7 @@ public class JdbcMealPlanDao implements MealPlanDao {
                 rs.getInt("meal_id"),
                 rs.getInt("meal_plan_id"),
                 rs.getInt("recipe_id"),
-                rs.getDate("meal_date"),
+                rs.getDate("meal_date").toLocalDate(),
                 rs.getString("meal_type")
         ), meal_plan_id);
     }
