@@ -9,6 +9,7 @@ import RegisterView from '../views/RegisterView.vue';
 import MyRecipesView from '../views/MyRecipesView.vue'; // Import MyRecipesView component
 import RecipeCreationView from '../views/RecipeCreationView.vue'; // Import recipe creation view
 import LandingPageView from '../views/LandingPageView.vue';
+import MealPlanView from '../views/MealPlanView.vue';
 
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
@@ -19,6 +20,15 @@ import LandingPageView from '../views/LandingPageView.vue';
  * If they have (or don't need to) they're allowed to go about their way.
  */
 const routes = [
+  {
+    path: '/meal-plan',
+    name: 'meal-plan',
+    component: MealPlanView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+
   {
     path: '/',
     name: 'landing',

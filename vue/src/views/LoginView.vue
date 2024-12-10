@@ -1,7 +1,7 @@
 <template>
   <div id="login">
     <form v-on:submit.prevent="login">
-      <h1 >Please Sign In</h1>
+      <h1>Please Sign In</h1>
       <div role="alert" v-if="invalidCredentials">
         Invalid username and password!
       </div>
@@ -18,8 +18,10 @@
       </div>
       <button type="submit">Sign in</button>
       <p>
-      <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link></p>
+        <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link>
+      </p>
     </form>
+    <button class="home-button" v-on:click="goHome">Home</button>
   </div>
 </template>
 
@@ -39,22 +41,25 @@ export default {
   },
   methods: {
     login() {
-  authService
-    .login(this.user)
-    .then(response => {
-      if (response.status == 200) {
-        this.$store.commit("SET_AUTH_TOKEN", response.data.token);
-        this.$store.commit("SET_USER", response.data.user);
-        this.$router.push("/home"); // Redirect to home after login
-      }
-    })
-    .catch(error => {
-      const response = error.response;
-      if (response.status === 401) {
-        this.invalidCredentials = true;
-      }
-    });
-}
+      authService
+        .login(this.user)
+        .then((response) => {
+          if (response.status == 200) {
+            this.$store.commit("SET_AUTH_TOKEN", response.data.token);
+            this.$store.commit("SET_USER", response.data.user);
+            this.$router.push("/home"); // Redirect to home after login
+          }
+        })
+        .catch((error) => {
+          const response = error.response;
+          if (response.status === 401) {
+            this.invalidCredentials = true;
+          }
+        });
+    },
+    goHome() {
+      this.$router.push("/"); // Redirect to the landing page
+    }
   }
 };
 </script>
@@ -65,5 +70,18 @@ export default {
 }
 label {
   margin-right: 0.5rem;
+}
+.home-button {
+  margin-top: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.home-button:hover {
+  background-color: #0056b3;
 }
 </style>

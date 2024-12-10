@@ -2,14 +2,18 @@
   <div id="capstone-app">
     <aside id="sidebar">
       <ul>
+        <!-- Ensure this navigates to 'landing' for the actual home/landing page -->
+        <li>
+          <router-link v-bind:to="{ name: 'landing' }">Home</router-link>
+        </li>
+        <li>
+          <router-link v-bind:to="{ name: 'meal-plan'}">Meal Plans</router-link>
+        </li>
         <li v-if="!$store.state.token">
           <router-link v-bind:to="{ name: 'login' }">Login</router-link>
         </li>
         <li v-if="!$store.state.token">
           <router-link v-bind:to="{ name: 'register' }">Register</router-link>
-        </li>
-        <li v-if="$store.state.token">
-          <router-link v-bind:to="{ name: 'home' }">Home</router-link>
         </li>
         <li v-if="$store.state.token">
           <router-link v-bind:to="{ name: 'my-recipes' }">View My Recipes</router-link>
