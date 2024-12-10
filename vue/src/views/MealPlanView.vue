@@ -220,6 +220,8 @@
           });
       },
     },
+
+    //hey, uuuh, what do you think you are doing, my man. this is really cool.
     mounted() {
       this.fetchMealPlans();
     },

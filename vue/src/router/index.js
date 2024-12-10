@@ -10,6 +10,7 @@ import MyRecipesView from '../views/MyRecipesView.vue'; // Import MyRecipesView 
 import RecipeCreationView from '../views/RecipeCreationView.vue'; // Import recipe creation view
 import LandingPageView from '../views/LandingPageView.vue';
 import MealPlanView from '../views/MealPlanView.vue';
+import GroceryListView from '../views/GroceryListView.vue';
 
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
@@ -28,7 +29,14 @@ const routes = [
       requiresAuth: true,
     },
   },
-
+  {
+    path: '/grocery-list',
+    name: 'grocery-list',
+    component: GroceryListView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
   {
     path: '/',
     name: 'landing',

@@ -22,9 +22,16 @@
           <router-link v-bind:to="{ name: 'create' }">Create New Recipe</router-link>
         </li>
         <li v-if="$store.state.token">
+          <router-link v-bind:to="{name: 'grocery-list'}">Grocery List</router-link>
+        </li>
+        <li v-if="$store.state.token">
           <router-link v-bind:to="{ name: 'logout' }">Logout</router-link>
         </li>
+        
+        
       </ul>
+
+
     </aside>
     <main>
       <router-view />
