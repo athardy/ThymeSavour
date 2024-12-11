@@ -39,7 +39,10 @@
     </header>
 
     <main>
+      <!-- Router View -->
       <router-view />
+      <!-- Loading Spinner -->
+      <LoadingSpinner :isLoading="isLoading" />
     </main>
 
     <footer class="footer">
@@ -49,10 +52,22 @@
 </template>
 
 <script>
+import { reactive } from "vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue"; // Import the spinner
+
+// Global loading state
+export const loadingState = reactive({
+  isLoading: false,
+});
+
 export default {
+  components: { LoadingSpinner },
   computed: {
     homeLink() {
-      return this.$store.state.token ? '/home' : '/landing'; // Correct route for logged-in users
+      return this.$store.state.token ? "/home" : "/landing"; // Correct route for logged-in users
+    },
+    isLoading() {
+      return loadingState.isLoading;
     },
   },
   methods: {
