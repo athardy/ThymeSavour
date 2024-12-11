@@ -1,7 +1,6 @@
 package com.techelevator.dao;
 
 import com.techelevator.model.Ingredient;
-
 import java.util.List;
 
 public interface IngredientDao {
@@ -10,10 +9,13 @@ public interface IngredientDao {
 
     List<Ingredient> getAllIngredients();
 
-    List<Ingredient> getIngredientByTypeId(int type_id);
+    List<Ingredient> getIngredientByTypeId(int typeId);
+
+    void deleteIngredientById(int ingredientId);
 
     List<Ingredient> getIngredientsByName(String ingredientName);
 
-    void deleteIngredientById(int ingredient_id);
+    Ingredient getIngredientByName(String ingredientName);  // Existing method
 
+    Ingredient getIngredientById(int ingredientId);  // New method to fetch ingredient by ID
 }

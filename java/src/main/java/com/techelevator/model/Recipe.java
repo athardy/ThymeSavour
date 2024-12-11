@@ -1,19 +1,20 @@
 package com.techelevator.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Recipe {
-
     private int recipe_id;
     private String recipe_name;
     private String description;
     private String instructions;
     private int author;
     private Date date_added;
-    private List<RecipeIngredient> ingredients;
+    private List<RecipeIngredient> ingredients = new ArrayList<>();
+    private int user_id;
 
-    public Recipe() {};
+    public Recipe() {}
 
     public Recipe(int recipe_id, String recipe_name, String description, String instructions, int author, Date date_added) {
         this.recipe_id = recipe_id;
@@ -22,6 +23,18 @@ public class Recipe {
         this.instructions = instructions;
         this.author = author;
         this.date_added = date_added;
+    }
+
+    public void addIngredient(RecipeIngredient ingredient) {
+        this.ingredients.add(ingredient);
+    }
+
+    // Getter and Setter for ingredients
+    public List<RecipeIngredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<RecipeIngredient> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -49,6 +62,14 @@ public class Recipe {
         this.description = description;
     }
 
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
     public int getAuthor() {
         return author;
     }
@@ -65,22 +86,11 @@ public class Recipe {
         this.date_added = date_added;
     }
 
-    public String getInstructions() {
-        return instructions;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
-
-    public List<RecipeIngredient> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<RecipeIngredient> ingredients) {
-        this.ingredients = ingredients;
-    }
-
-
-
 }

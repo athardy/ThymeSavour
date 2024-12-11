@@ -1,62 +1,105 @@
 BEGIN TRANSACTION;
 
-INSERT INTO users (username,password_hash,role) VALUES ('user','$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC','ROLE_USER');
-INSERT INTO users (username,password_hash,role) VALUES ('admin','$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC','ROLE_ADMIN');
+-- -- Insert users
+-- INSERT INTO users (username, password_hash, role) VALUES ('user', '$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC', 'ROLE_USER');
+-- INSERT INTO users (username, password_hash, role) VALUES ('admin', '$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC', 'ROLE_ADMIN');
 
-INSERT INTO categories (category_name) VALUES ('Breakfast');
-INSERT INTO categories (category_name) VALUES ('Lunch');
-INSERT INTO categories (category_name) VALUES ('Dinner');
-INSERT INTO categories (category_name) VALUES ('Snacks');
-INSERT INTO categories (category_name) VALUES ('Desert');
-INSERT INTO categories (category_name) VALUES ('Vegetarian');
-INSERT INTO categories (category_name) VALUES ('Vegan');
-INSERT INTO categories (category_name) VALUES ('Low-Carb');
-INSERT INTO categories (category_name) VALUES ('Paleo');
-INSERT INTO categories (category_name) VALUES ('Keto');
+-- Insert categories
+INSERT INTO categories (category_name) VALUES 
+('Breakfast'), 
+('Lunch'), 
+('Dinner'), 
+('Snacks'), 
+('Dessert'), 
+('Vegetarian'), 
+('Vegan'), 
+('Low-Carb'), 
+('Paleo'), 
+('Keto'), 
+('Appetizers'), 
+('Main Course'), 
+('Side Dish'), 
+('Salad'), 
+('Soup'), 
+('Seafood'), 
+('Pasta'), 
+('Casserole'), 
+('Smoothie'), 
+('BBQ'), 
+('Sandwich'), 
+('Gluten-Free'), 
+('Dairy-Free');
 
-INSERT INTO ingredient_type (type_name) VALUES ('Herb');
-INSERT INTO ingredient_type (type_name) VALUES ('Meat');
-INSERT INTO ingredient_type (type_name) VALUES ('Vegetable');
-INSERT INTO ingredient_type (type_name) VALUES ('Fruit');
-INSERT INTO ingredient_type (type_name) VALUES ('Dairy');
-INSERT INTO ingredient_type (type_name) VALUES ('Cheese');
-INSERT INTO ingredient_type (type_name) VALUES ('Grain');
-INSERT INTO ingredient_type (type_name) VALUES ('Other');
+-- Insert ingredient types
+INSERT INTO ingredient_type (type_name) VALUES 
+('Protein'), 
+('Vegetable'), 
+('Fruit'), 
+('Dairy'), 
+('Grain'), 
+('Cheese'), 
+('Condiment'), 
+('Oil'), 
+('Spice'), 
+('Sweetener'), 
+('Nut'), 
+('Legume'), 
+('Dressing'), 
+('Seafood'), 
+('Beverage');
 
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Tomato', (SELECT type_id FROM ingredient_type WHERE type_name = 'Fruit'));
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Onion', (SELECT type_id FROM ingredient_type WHERE type_name = 'Vegetable'));
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Potato', (SELECT type_id FROM ingredient_type WHERE type_name = 'Vegetable'));
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Spaghetti', (SELECT type_id FROM ingredient_type WHERE type_name = 'Grain'));
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Garlic', (SELECT type_id FROM ingredient_type WHERE type_name = 'Vegetable'));
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Olive Oil', (SELECT type_id FROM ingredient_type WHERE type_name = 'Other'));
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Parmesan Cheese', (SELECT type_id FROM ingredient_type WHERE type_name = 'Cheese'));
-INSERT INTO ingredients (ingredient_name, type_id) VALUES ('Lasagna', (SELECT type_id FROM ingredient_type WHERE type_name = 'Grain'));
+-- Insert ingredients
+INSERT INTO ingredients (ingredient_name, type_id) VALUES 
+('Chicken Breast', (SELECT type_id FROM ingredient_type WHERE type_name = 'Protein')),
+('Tomato', (SELECT type_id FROM ingredient_type WHERE type_name = 'Vegetable')),
+('Spinach', (SELECT type_id FROM ingredient_type WHERE type_name = 'Vegetable')),
+('Quinoa', (SELECT type_id FROM ingredient_type WHERE type_name = 'Grain')),
+('Milk', (SELECT type_id FROM ingredient_type WHERE type_name = 'Dairy')),
+('Ranch Dressing', (SELECT type_id FROM ingredient_type WHERE type_name = 'Dressing')),
+('Shrimp', (SELECT type_id FROM ingredient_type WHERE type_name = 'Seafood')),
+('Black Pepper', (SELECT type_id FROM ingredient_type WHERE type_name = 'Spice')),
+('Honey', (SELECT type_id FROM ingredient_type WHERE type_name = 'Sweetener')),
+('Vegetable Oil', (SELECT type_id FROM ingredient_type WHERE type_name = 'Oil')),
+('Almonds', (SELECT type_id FROM ingredient_type WHERE type_name = 'Nut')),
+('Peanuts', (SELECT type_id FROM ingredient_type WHERE type_name = 'Legume')),
+('Bananas', (SELECT type_id FROM ingredient_type WHERE type_name = 'Fruit')),
+('Orange Juice', (SELECT type_id FROM ingredient_type WHERE type_name = 'Beverage')),
+('Garlic', (SELECT type_id FROM ingredient_type WHERE type_name = 'Vegetable'));
 
-INSERT INTO recipes (recipe_name, description, instructions, author) VALUES ('Spaghetti with Red Sauce', 'Classic Italian dish', 'Cook spaghetti and add red sauce', '1' );
+-- Insert recipes
+INSERT INTO recipes (recipe_name, description, instructions, author) VALUES 
+('Grilled Chicken Salad', 'A healthy grilled chicken salad with ranch dressing.', 'Grill chicken, mix with veggies and ranch.', (SELECT user_id FROM users WHERE username = 'user')),
+('Shrimp Alfredo', 'Creamy shrimp pasta dish.', 'Cook pasta, make Alfredo sauce, and add shrimp.', (SELECT user_id FROM users WHERE username = 'admin')),
+('Quinoa Bowl', 'Healthy grain bowl with vegetables.', 'Cook quinoa, stir-fry veggies, and mix together.', (SELECT user_id FROM users WHERE username = 'user')),
+('Banana Smoothie', 'Refreshing banana-based drink.', 'Blend bananas, milk, and honey.', (SELECT user_id FROM users WHERE username = 'user')),
+('Lemon Garlic Shrimp', 'Zesty shrimp dish.', 'Saute shrimp with lemon and garlic.', (SELECT user_id FROM users WHERE username = 'admin')),
+('Vegetarian Lasagna', 'Classic lasagna without meat.', 'Layer pasta, veggies, and cheese.', (SELECT user_id FROM users WHERE username = 'admin')),
+('Stuffed Peppers', 'Peppers stuffed with rice and meat.', 'Bake stuffed peppers in an oven.', (SELECT user_id FROM users WHERE username = 'user'));
 
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('1', '1', '1', 'Can');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('1', '4', '1', 'lb');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('1', '5', '5', 'Cloves');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('1', '6', '2', 'TBSP');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('1', '7', '1', 'Cup');
+-- Insert recipe_ingredients
+INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES 
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Grilled Chicken Salad'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Chicken Breast'), 200, 'g'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Grilled Chicken Salad'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Tomato'), 100, 'g'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Shrimp Alfredo'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Shrimp'), 300, 'g'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Shrimp Alfredo'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Garlic'), 5, 'cloves'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Quinoa Bowl'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Quinoa'), 150, 'g'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Quinoa Bowl'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Spinach'), 100, 'g'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Banana Smoothie'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Bananas'), 2, 'pcs'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Banana Smoothie'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Milk'), 200, 'ml'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Lemon Garlic Shrimp'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Shrimp'), 250, 'g'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Lemon Garlic Shrimp'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Garlic'), 3, 'cloves'),
+((SELECT recipe_id FROM recipes WHERE recipe_name = 'Stuffed Peppers'), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = 'Tomato'), 150, 'g');
 
-INSERT INTO recipes (recipe_name, description, instructions, author) VALUES ('Lasagna', 'Just like how mom used to make... mmmm hmmm.', 'Go to Olive Garden', '1' );
+-- Insert meal plans
+INSERT INTO meal_plan (meal_plan_name, user_id, start_date, end_date) VALUES 
+('Healthy Week', (SELECT user_id FROM users WHERE username = 'user'), '2024-12-10', '2024-12-16'),
+('Seafood Specials', (SELECT user_id FROM users WHERE username = 'admin'), '2024-12-10', '2024-12-16');
 
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('2', '1', '2', 'Can');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('2', '8', '1', 'lb');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('2', '5', '5', 'Cloves');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('2', '6', '3', 'TBSP');
-INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES ('2', '7', '2', 'Cup');
-
-INSERT INTO meal_plan (meal_plan_name, user_id, start_date, end_date) VALUES ('Italian-fest Week', '1', '2024-12-06', '2024-12-08');
-
-INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES ('1', '1', '2024-12-06', 'Dinner');
-INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES ('1', '2', '2024-12-07', 'Dinner');
-
-
-
-
-
-
+-- Insert meals
+INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES 
+((SELECT meal_plan_id FROM meal_plan WHERE meal_plan_name = 'Healthy Week'), (SELECT recipe_id FROM recipes WHERE recipe_name = 'Grilled Chicken Salad'), '2024-12-10', 'Dinner'),
+((SELECT meal_plan_id FROM meal_plan WHERE meal_plan_name = 'Healthy Week'), (SELECT recipe_id FROM recipes WHERE recipe_name = 'Banana Smoothie'), '2024-12-11', 'Breakfast'),
+((SELECT meal_plan_id FROM meal_plan WHERE meal_plan_name = 'Seafood Specials'), (SELECT recipe_id FROM recipes WHERE recipe_name = 'Shrimp Alfredo'), '2024-12-12', 'Dinner'),
+((SELECT meal_plan_id FROM meal_plan WHERE meal_plan_name = 'Seafood Specials'), (SELECT recipe_id FROM recipes WHERE recipe_name = 'Lemon Garlic Shrimp'), '2024-12-13', 'Dinner');
 
 COMMIT TRANSACTION;

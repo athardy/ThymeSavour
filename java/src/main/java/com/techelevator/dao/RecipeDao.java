@@ -2,29 +2,22 @@ package com.techelevator.dao;
 
 import com.techelevator.model.Recipe;
 import com.techelevator.model.RecipeIngredient;
-
 import java.util.List;
 
 public interface RecipeDao {
 
-    List<Recipe> getAllRecipes();
+    List<Recipe> getRecipesByUserId(int userId);  // Get recipes by user
 
-    List<Recipe> getRecipesByUserId(int id);
+    Recipe getRecipeById(int recipeId);  // Get a specific recipe by its ID
 
-    Recipe getRecipeById(int id); //renamed
+    List<RecipeIngredient> getRecipeIngredients(int recipeId);  // Get ingredients for a specific recipe
 
-    List<Recipe> getRecipesByIngredientId(int ingredientId);
+    void createRecipe(Recipe recipe);  // Create a new recipe
 
-    int createNewRecipe(Recipe recipe);
+    void updateRecipe(Recipe recipe);  // Update an existing recipe
 
-    List<RecipeIngredient> getIngredientsForRecipe(int recipeId);
+    void softDeleteRecipe(int recipeId);  // Soft delete a recipe by its ID
 
-    void addIngredientToRecipe(RecipeIngredient recipeIngredient);
-
-    void editIngredientToRecipeById(int id, RecipeIngredient recipeIngredient);
-
-    void deleteRecipeById(int recipe_id);
-
-    public Recipe getRandomRecipe();
+    List<String> getRecipeNames(int userId);  // Get recipe names for a user
 
 }

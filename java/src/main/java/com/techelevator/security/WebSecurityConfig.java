@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -39,34 +42,47 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*"); // Allow all origins for demo purposes
+        config.addAllowedHeader("*"); // Allow all headers
+        config.addAllowedMethod("*"); // Allow all HTTP methods
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
     /**
      * Configure paths and requests that should be ignored by Spring Security
      * @param web
      */
+    @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
     /**
-     * Configure com.techelevator.auctions.security settings
+     * Configure security settings
      * @param httpSecurity
      * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // we don't need CSRF because our token is invulnerable
-                .csrf().disable()
-
+                .cors() // Enable CORS
+                .and()
+                .csrf().disable() // Disable CSRF for stateless JWT
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
-
-                // create no session
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session
+                .and()
+                .authorizeRequests()
+                .antMatchers("/**").permitAll() // Allow all requests for demo purposes
                 .and()
                 .apply(securityConfigurerAdapter());
     }
@@ -75,4 +91,3 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JWTConfigurer(tokenProvider);
     }
 }
-

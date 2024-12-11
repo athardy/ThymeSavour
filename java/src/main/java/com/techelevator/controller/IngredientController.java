@@ -22,14 +22,14 @@ public class IngredientController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createIngredient(@RequestBody Ingredient ingredient) {
-        try {
-            ingredientDao.createIngredient(ingredient);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Ingredient created!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
-        }
+public ResponseEntity<String> createIngredient(@RequestBody Ingredient ingredient) {
+    try {
+        ingredientDao.createIngredient(ingredient);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Ingredient created!");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
     }
+}
 
     @GetMapping("/all")
     public List<Ingredient> getAllIngredients() {
@@ -55,4 +55,5 @@ public class IngredientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
         }
     }
-}
+
+    }
