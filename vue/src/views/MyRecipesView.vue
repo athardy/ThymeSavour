@@ -2,54 +2,8 @@
   <div class="my-recipes">
     <h1>My Recipes</h1>
 
-    <!-- Search Filters and Create Recipe Button -->
-    <div class="filters-and-create">
-      <div class="filter-group">
-        <input
-          type="text"
-          v-model="searchFilters.name"
-          @focus="fetchRecipeNames"
-          @input="fetchFilteredRecipes"
-          placeholder="Filter by name"
-          list="name-options"
-        />
-        <datalist id="name-options">
-          <option v-for="name in recipeNames" :key="name" :value="name" />
-        </datalist>
-        <button v-if="searchFilters.name" @click="clearFilter('name')" class="clear-button">Clear</button>
-      </div>
-
-      <div class="filter-group">
-        <input
-          type="text"
-          v-model="searchFilters.ingredient"
-          @focus="fetchIngredientNames"
-          @input="fetchFilteredRecipes"
-          placeholder="Filter by ingredient"
-          list="ingredient-options"
-        />
-        <datalist id="ingredient-options">
-          <option v-for="ingredient in ingredientNames" :key="ingredient" :value="ingredient" />
-        </datalist>
-        <button v-if="searchFilters.ingredient" @click="clearFilter('ingredient')" class="clear-button">Clear</button>
-      </div>
-
-      <div class="filter-group">
-        <input
-          type="text"
-          v-model="searchFilters.category"
-          @focus="fetchCategoryNames"
-          @input="fetchFilteredRecipes"
-          placeholder="Filter by category"
-          list="category-options"
-        />
-        <datalist id="category-options">
-          <option v-for="category in categoryNames" :key="category" :value="category" />
-        </datalist>
-        <button v-if="searchFilters.category" @click="clearFilter('category')" class="clear-button">Clear</button>
-      </div>
-
-      <!-- Create Recipe Button -->
+    <!-- Create Recipe Button -->
+    <div class="create-recipe">
       <router-link to="/create-recipe" class="create-button">
         Create Recipe
       </router-link>
@@ -78,23 +32,20 @@ export default {
   data() {
     return {
       recipes: [],
-      recipeNames: [],
-      ingredientNames: [],
-      categoryNames: [],
-      searchFilters: {
-        name: "",
-        ingredient: "",
-        category: "",
-      },
     };
   },
   methods: {
     fetchRecipes() {
-      const userId = this.$store.state.userId; // Ensure that userId is available in your state
+      const userId = this.$store.getters.userId;
+
+      if (!userId) {
+        console.error("User ID is not defined. Cannot fetch recipes.");
+        return;
+      }
 
       axios
         .get(`${import.meta.env.VITE_REMOTE_API}/recipes/my-recipes`, {
-          params: { userId }, // Pass userId as a query parameter
+          params: { userId },
         })
         .then((response) => {
           this.recipes = response.data;
@@ -102,68 +53,6 @@ export default {
         .catch((error) => {
           console.error("Error fetching recipes:", error);
         });
-    },
-
-    fetchRecipeNames() {
-      const userId = this.$store.state.userId; // Make sure userId is available in your state
-
-      axios
-        .get(`${import.meta.env.VITE_REMOTE_API}/recipes/names`, {
-          params: { userId },
-        })
-        .then((response) => {
-          this.recipeNames = response.data;
-        })
-        .catch((error) => {
-          console.error("Error fetching recipe names:", error);
-        });
-    },
-
-    fetchIngredientNames() {
-      axios
-        .get(`${import.meta.env.VITE_REMOTE_API}/recipes/ingredients`, {
-          headers: { Authorization: `Bearer ${this.$store.state.token}` },
-        })
-        .then((response) => {
-          this.ingredientNames = response.data;
-        })
-        .catch((error) => {
-          console.error("Error fetching ingredient names:", error);
-        });
-    },
-
-    fetchCategoryNames() {
-      axios
-        .get(`${import.meta.env.VITE_REMOTE_API}/recipes/categories`)
-        .then((response) => {
-          this.categoryNames = response.data;
-        })
-        .catch((error) => {
-          console.error("Error fetching category names:", error);
-        });
-    },
-
-    fetchFilteredRecipes() {
-      axios
-        .get(`${import.meta.env.VITE_REMOTE_API}/recipes/search`, {
-          params: {
-            name: this.searchFilters.name,
-            ingredient: this.searchFilters.ingredient,
-            category: this.searchFilters.category,
-          },
-          headers: { Authorization: `Bearer ${this.$store.state.token}` },
-        })
-        .then((response) => {
-          this.recipes = response.data;
-        })
-        .catch((error) => {
-          console.error("Error fetching filtered recipes:", error);
-        });
-    },
-
-    clearFilter(field) {
-      this.searchFilters[field] = "";
-      this.fetchFilteredRecipes();
     },
 
     deleteRecipe(recipeId) {
@@ -188,42 +77,13 @@ export default {
 <style scoped>
 .my-recipes {
   padding: 2rem;
-  background-color: #d3f1df; /* Background color */
+  background-color: #d3f1df;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.filters-and-create {
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%;
-  max-width: 300px;
-}
-
-input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.clear-button {
-  padding: 0.3rem 1rem;
-  background-color: #ff9a9a;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.clear-button:hover {
-  background-color: #ff7f7f;
+.create-recipe {
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .create-button {

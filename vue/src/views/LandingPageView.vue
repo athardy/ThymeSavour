@@ -22,6 +22,9 @@
 
       <!-- Section 2: Features and Benefits -->
       <section class="features-section">
+        <div class="image">
+          <img src="src/assets/landing_features.png" alt="Features Image" />
+        </div>
         <div class="text">
           <h2>Features You’ll Love</h2>
           <p>
@@ -29,9 +32,6 @@
             week, or creating new recipes, Thyme Savour has everything you need
             in one place.
           </p>
-        </div>
-        <div class="image">
-          <img src="src/assets/landing_features.png" alt="Features Image" />
         </div>
       </section>
 
@@ -71,29 +71,31 @@ export default {
 
 header {
   text-align: center;
-  margin-bottom: 5rem; /* Increase the space between header and body */
+  margin-bottom: 3rem; /* Adjust space between header and body */
 }
 
 .logo {
-  width: 150px;  /* Match size from About page */
+  width: 150px;
   height: auto;
-  margin-bottom: 2rem;
-  background-color: transparent; /* Ensure no background around the logo */
+  margin-bottom: 1.5rem;
+  background-color: transparent;
 }
 
 h2 {
   font-size: 2rem;
   color: #85A98F;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 p {
   font-size: 1.2rem;
   color: #333;
+  margin-bottom: 0.8rem;
 }
 
 img {
-  width: 100%;
+  width: 90%; /* Reduced image size */
+  max-width: 300px; /* Maximum image size */
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -103,28 +105,29 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  flex-grow: 1; /* Ensures the main section grows to fill the space */
+  flex-grow: 1;
 }
 
 section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   padding: 20px 0;
-  background-color: #D3F1DF; /* Matching the background color */
+}
+
+section.reverse-layout {
+  flex-direction: row-reverse;
 }
 
 section .text {
   flex: 1;
-  padding-right: 2rem;
+  padding: 0 2rem;
 }
 
-/* scaled images 50% */
 section .image {
   flex: 1;
-  scale: 50%;
-  padding-left: 2rem;
+  padding: 0 2rem;
 }
 
 /* Mobile Responsiveness */
@@ -132,21 +135,24 @@ section .image {
   section {
     flex-direction: column;
     align-items: center;
-    padding: 10px 0;
-  }
-
-  section .text, section .image {
-    padding-left: 0;
-    padding-right: 0;
     text-align: center;
   }
 
+  section.reverse-layout {
+    flex-direction: column;
+  }
+
+  section .text,
   section .image {
-    margin-top: 2rem;
+    padding: 0;
+  }
+
+  section .image {
+    margin-top: 1.5rem;
   }
 
   .logo {
-    width: 120px; /* Smaller logo on mobile */
+    width: 120px;
   }
 
   h2 {

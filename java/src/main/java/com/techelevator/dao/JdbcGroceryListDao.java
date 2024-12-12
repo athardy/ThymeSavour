@@ -63,4 +63,32 @@ public class JdbcGroceryListDao implements GroceryListDao {
 
         return jdbcTemplate.queryForList(sql, userId, userId);
     }
+    @Override
+    public List<Map<String, Object>> getGroceryListByMealPlan(int mealPlanId) {
+        String sql =
+                "SELECT " +
+                        "    i.ingredient_id, " +
+                        "    i.ingredient_name, " +
+                        "    ri.unit, " +
+                        "    SUM(ri.quantity) AS total_quantity " +
+                        "FROM " +
+                        "    meal_plan mp " +
+                        "JOIN " +
+                        "    meals m " +
+                        "    ON mp.meal_plan_id = m.meal_plan_id " +
+                        "JOIN " +
+                        "    recipe_ingredient ri " +
+                        "    ON ri.recipe_id = m.recipe_id " +
+                        "JOIN " +
+                        "    ingredients i " +
+                        "    ON ri.ingredient_id = i.ingredient_id " +
+                        "WHERE " +
+                        "    mp.meal_plan_id = ? " +
+                        "GROUP BY " +
+                        "    i.ingredient_id, " +
+                        "    i.ingredient_name, " +
+                        "    ri.unit";
+
+        return jdbcTemplate.queryForList(sql, mealPlanId);
+    }
 }

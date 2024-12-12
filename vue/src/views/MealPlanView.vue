@@ -40,6 +40,50 @@ export default {
     };
   },
   methods: {
+    randomlyFillMeals() {
+    if (!this.allRecipes.length || !this.calendarDays.length) {
+      alert("No recipes available or calendar days found.");
+      return;
+    }
+
+    const mealTypes = ["Breakfast", "Lunch", "Dinner", "Snack"];
+    const randomMeals = [];
+
+    // Iterate over each day in the calendar
+    this.calendarDays.forEach((day) => {
+      mealTypes.forEach((mealType) => {
+        // Check if the meal type is already present for the day
+        const isMealPresent = day.meals.some((meal) => meal.meal_type === mealType);
+
+        if (!isMealPresent) {
+          // Select a random recipe
+          const randomRecipe = this.allRecipes[Math.floor(Math.random() * this.allRecipes.length)];
+          randomMeals.push({
+            meal_plan_id: this.selectedMealPlanId,
+            recipe_id: randomRecipe.recipe_id,
+            meal_date: day.date,
+            meal_type: mealType,
+          });
+        }
+      });
+    });
+
+    if (randomMeals.length === 0) {
+      alert("No empty meal slots to fill.");
+      return;
+    }
+
+    // Send the random meals to the backend for bulk creation
+    axios
+      .post(`${import.meta.env.VITE_REMOTE_API}/meals/bulk-create`, randomMeals, {
+        headers: { Authorization: `Bearer ${this.$store.state.token}` },
+      })
+      .then(() => {
+        alert("Empty meal slots filled successfully!");
+        this.fetchMealPlanDetails(); // Refresh the plan
+      })
+      .catch((error) => console.error("Error saving meals:", error));
+  },
     fetchMealPlans() {
       axios
         .get(`${import.meta.env.VITE_REMOTE_API}/meal-plans/all`, {

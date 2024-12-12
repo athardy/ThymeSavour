@@ -16,27 +16,29 @@ import MealPlanEditView from "@/views/MealPlanEditView.vue";
 import RecipeDetailsView from "@/views/RecipeDetailsView.vue";
 
 const routes = [
-  { path: "/home", name: "home", component: HomeView },
-  { path: "/landing", name: "landing", component: LandingPageView },
-  { path: "/about", name: "about", component: AboutView },
-  { path: "/login", name: "login", component: LoginView },
-  { path: "/register", name: "register", component: RegisterView },
-  { path: "/my-recipes", name: "my-recipes", component: MyRecipesView },
-  { path: "/create-recipe", name: "create-recipe", component: RecipeCreationView },
-  { path: "/meal-plan-list", name: "meal-plan-list", component: MealPlanListView },
-  { path: "/create-meal-plan", name: "create-meal-plan", component: MealPlanCreationView },
-  { path: "/grocery-list", name: "grocery-list", component: GroceryListView },
+  { path: "/home", name: "home", component: HomeView, meta: { title: "Home - Thyme Savour" } },
+  { path: "/landing", name: "landing", component: LandingPageView, meta: { title: "Welcome - Thyme Savour" } },
+  { path: "/about", name: "about", component: AboutView, meta: { title: "About Us - Thyme Savour" } },
+  { path: "/login", name: "login", component: LoginView, meta: { title: "Login - Thyme Savour" } },
+  { path: "/register", name: "register", component: RegisterView, meta: { title: "Register - Thyme Savour" } },
+  { path: "/my-recipes", name: "my-recipes", component: MyRecipesView, meta: { title: "My Recipes - Thyme Savour" } },
+  { path: "/create-recipe", name: "create-recipe", component: RecipeCreationView, meta: { title: "Create Recipe - Thyme Savour" } },
+  { path: "/meal-plan-list", name: "meal-plan-list", component: MealPlanListView, meta: { title: "Meal Plans - Thyme Savour" } },
+  { path: "/create-meal-plan", name: "create-meal-plan", component: MealPlanCreationView, meta: { title: "Create Meal Plan - Thyme Savour" } },
+  { path: "/grocery-list", name: "grocery-list", component: GroceryListView, meta: { title: "Grocery List - Thyme Savour" } },
   {
     path: "/meal-plan-edit/:id",
     name: "meal-plan-edit",
     component: MealPlanEditView,
     props: true,
+    meta: { title: "Edit Meal Plan - Thyme Savour" },
   },
   {
     path: "/recipe-details/:id",
     name: "recipe-details",
     component: RecipeDetailsView,
     props: true,
+    meta: { title: "Recipe Details - Thyme Savour" },
   },
 ];
 
@@ -47,6 +49,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   console.log("Navigation started: Showing spinner");
+
+  // Update the document title dynamically
+  document.title = to.meta.title || "Thyme Savour"; // Default title
+
   loadingState.isLoading = true; // Show spinner
   next();
 });

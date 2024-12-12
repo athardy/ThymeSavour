@@ -4,6 +4,7 @@ import com.techelevator.model.Meal;
 import com.techelevator.model.MealPlan;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MealPlanDao {
     void createMealPlan(MealPlan mealPlan);
@@ -15,4 +16,8 @@ public interface MealPlanDao {
     void updateMealPlan(MealPlan mealPlan);
     public MealPlan getMealPlanById(int mealPlanId);
     void addMealToPlan(Meal meal);
+
+    List<Map<String, Object>> getMealsWithRecipes(int mealPlanId);
+
+    void generateMealsForPlan(int mealPlanId);
 }

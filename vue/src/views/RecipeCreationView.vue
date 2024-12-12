@@ -1,98 +1,74 @@
 <template>
   <div class="recipe-creation">
-    <h1>Create a New Recipe</h1>
-
-    <form @submit.prevent="createRecipe">
-      <!-- Recipe Name -->
-      <div class="form-group">
-        <label for="recipeName">Recipe Name:</label>
-        <input
-          type="text"
-          id="recipeName"
-          v-model="recipe.recipe_name"
-          required
-          placeholder="Enter recipe name"
-        />
-      </div>
-
-      <!-- Description -->
-      <div class="form-group">
-        <label for="description">Description:</label>
-        <textarea
-          id="description"
-          v-model="recipe.description"
-          required
-          placeholder="Enter a brief description of the recipe"
-        ></textarea>
-      </div>
-
-      <!-- Instructions -->
-      <div class="form-group">
-        <label for="instructions">Instructions:</label>
-        <textarea
-          id="instructions"
-          v-model="recipe.instructions"
-          required
-          placeholder="Enter the cooking instructions"
-        ></textarea>
-      </div>
-
-      <!-- Ingredients Section -->
-      <div class="ingredient-section">
-        <h2>Ingredients</h2>
-
-        <!-- Ingredient Search -->
-        <div class="ingredient-search">
-          <label for="ingredientSearch">Search Ingredients:</label>
+    <div class="recipe-card">
+      <h2>Create a New Recipe</h2>
+      <form @submit.prevent="createRecipe">
+        <div class="form-group">
+          <label for="recipe_name">Recipe Name:</label>
           <input
             type="text"
-            id="ingredientSearch"
-            v-model="ingredientSearch"
-            @input="filterIngredients"
-            placeholder="Search ingredients"
-            list="ingredient-options"
+            v-model="newRecipe.recipe_name"
+            class="input-field"
+            required
+            placeholder="Enter recipe name"
           />
-          <!-- Datalist for dynamically filtered ingredients -->
-          <datalist id="ingredient-options">
-            <option
-              v-for="ingredient in filteredIngredients"
-              :key="ingredient.ingredient_id"
-              :value="ingredient.ingredient_name"
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea
+            v-model="newRecipe.description"
+            class="textarea-field"
+            required
+            placeholder="Enter recipe description"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="instructions">Instructions:</label>
+          <textarea
+            v-model="newRecipe.instructions"
+            class="textarea-field"
+            required
+            placeholder="Enter recipe instructions"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <h3>Ingredients:</h3>
+          <div v-for="(ingredient, index) in newRecipe.ingredients" :key="index" class="ingredient-row">
+            <input
+              type="text"
+              v-model="ingredient.ingredient_name"
+              placeholder="Ingredient name"
+              class="input-field"
+              required
             />
-          </datalist>
+            <input
+              type="number"
+              v-model="ingredient.quantity"
+              placeholder="Quantity"
+              class="input-field"
+              required
+            />
+            <input
+              type="text"
+              v-model="ingredient.unit"
+              placeholder="Unit (e.g., grams, cups)"
+              class="input-field"
+              required
+            />
+            <button @click.prevent="removeIngredient(index)" class="remove-btn">Remove</button>
+          </div>
+          <button @click.prevent="addIngredient" class="add-ingredient-btn">Add Ingredient</button>
         </div>
 
-        <!-- Ingredients List -->
-        <div v-for="(ingredient, index) in recipe.ingredients" :key="index" class="ingredient-item">
-          <input
-            type="text"
-            v-model="ingredient.ingredient_name"
-            :placeholder="`Ingredient ${index + 1} Name`"
-            required
-          />
-          <input
-            type="number"
-            v-model="ingredient.quantity"
-            :placeholder="`Quantity ${index + 1}`"
-            required
-          />
-          <input
-            type="text"
-            v-model="ingredient.unit"
-            :placeholder="`Unit ${index + 1}`"
-            required
-          />
-          <button @click.prevent="removeIngredient(index)" class="remove-ingredient-btn">Remove</button>
+        <div class="button-group">
+          <button type="submit" class="save-btn">Save Recipe</button>
+          <router-link to="/my-recipes" class="cancel-btn">Cancel</router-link>
         </div>
-
-        <!-- Add Ingredient Button -->
-        <button @click.prevent="addIngredient" class="add-ingredient-btn">Add Ingredient</button>
-      </div>
-
-      <div class="submit-section">
-        <button type="submit">Save Recipe</button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -102,39 +78,35 @@ import axios from "axios";
 export default {
   data() {
     return {
-      recipe: {
+      newRecipe: {
         recipe_name: "",
         description: "",
         instructions: "",
         ingredients: [],
       },
-      ingredientSearch: "",
-      filteredIngredients: [],
     };
   },
   methods: {
     createRecipe() {
+      // Post the new recipe to the server
       axios
-        .post(`${import.meta.env.VITE_REMOTE_API}/recipes`, this.recipe, {
-          headers: { Authorization: `Bearer ${this.$store.state.token}` },
-        })
+        .post(`${import.meta.env.VITE_REMOTE_API}/recipes`, this.newRecipe)
         .then(() => {
-          alert("Recipe created successfully!");
-          this.$router.push({ name: "my-recipes" });
+          this.$router.push("/my-recipes");
         })
         .catch((error) => {
           console.error("Error creating recipe:", error);
-          alert("Failed to create recipe.");
         });
     },
     addIngredient() {
-      this.recipe.ingredients.push({ ingredient_name: "", quantity: 0, unit: "" });
+      this.newRecipe.ingredients.push({
+        ingredient_name: "",
+        quantity: 0,
+        unit: "",
+      });
     },
     removeIngredient(index) {
-      this.recipe.ingredients.splice(index, 1);
-    },
-    filterIngredients() {
-      // Your logic to filter ingredients from the API or a local list
+      this.newRecipe.ingredients.splice(index, 1);
     },
   },
 };
@@ -142,35 +114,96 @@ export default {
 
 <style scoped>
 .recipe-creation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.recipe-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
   max-width: 800px;
-  margin: auto;
-  text-align: left;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
-button {
-  padding: 0.8rem 1.5rem;
-  font-size: 1.2rem;
+.input-field,
+.textarea-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.ingredient-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.remove-btn {
+  background-color: #f8d7da;
+  color: #721c24;
   border: none;
+  padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  width: 100%;
-  max-width: 200px;
 }
 
-button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
+.add-ingredient-btn {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-button:active {
-  background-color: #004494;
-  transform: translateY(0);
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.save-btn {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+}
+
+button:hover,
+.cancel-btn:hover {
+  opacity: 0.9;
 }
 </style>

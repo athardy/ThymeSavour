@@ -6,7 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
+import java.sql.Date;
 
 @Component
 public class JdbcMealPlanDao implements MealPlanDao {
@@ -96,9 +97,55 @@ public MealPlan getMealPlanById(int mealPlanId) {
         rs.getDate("end_date")
     ), mealPlanId);
 }
-@Override
-public void addMealToPlan(Meal meal) {
-    String sql = "INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES (?, ?, ?, ?)";
-    jdbcTemplate.update(sql, meal.getMeal_plan_id(), meal.getRecipe_id(), meal.getMeal_date(), meal.getMeal_type());
-}
+    @Override
+    public void addMealToPlan(Meal meal) {
+        String sql = "INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, meal.getMeal_plan_id(), meal.getRecipe_id(), meal.getMeal_date(), meal.getMeal_type());
+    }
+    @Override
+    public List<Map<String, Object>> getMealsWithRecipes(int mealPlanId) {
+        String sql = "SELECT m.meal_id, m.meal_date, m.meal_type, r.recipe_id, r.recipe_name, r.description " +
+                "FROM meals m " +
+                "JOIN recipes r ON m.recipe_id = r.recipe_id " +
+                "WHERE m.meal_plan_id = ? AND m.is_deleted = FALSE";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Map<String, Object> mealWithRecipe = new HashMap<>();
+            mealWithRecipe.put("meal_id", rs.getInt("meal_id"));
+            mealWithRecipe.put("meal_date", rs.getDate("meal_date").toLocalDate());
+            mealWithRecipe.put("meal_type", rs.getString("meal_type"));
+            mealWithRecipe.put("recipe_id", rs.getInt("recipe_id"));
+            mealWithRecipe.put("recipe_name", rs.getString("recipe_name"));
+            mealWithRecipe.put("description", rs.getString("description"));
+            return mealWithRecipe;
+        }, mealPlanId);
+    }
+    public void generateMealsForPlan(int mealPlanId) {
+        String getRecipesSql = "SELECT recipe_id FROM recipes WHERE is_deleted = FALSE";
+        List<Integer> recipeIds = jdbcTemplate.queryForList(getRecipesSql, Integer.class);
+
+        if (recipeIds.isEmpty()) {
+            throw new RuntimeException("No recipes available to generate meals.");
+        }
+
+        String getMealPlanSql = "SELECT start_date, end_date FROM meal_plan WHERE meal_plan_id = ?";
+        Map<String, Object> mealPlanDates = jdbcTemplate.queryForMap(getMealPlanSql, mealPlanId);
+
+        LocalDate startDate = ((Date) mealPlanDates.get("start_date")).toLocalDate();
+        LocalDate endDate = ((Date) mealPlanDates.get("end_date")).toLocalDate();
+
+        String insertMealSql = "INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES (?, ?, ?, ?)";
+
+        Random random = new Random();
+        String[] mealTypes = {"Breakfast", "Lunch", "Dinner", "Snack"};
+
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            for (String mealType : mealTypes) {
+                int randomRecipeId = recipeIds.get(random.nextInt(recipeIds.size()));
+                jdbcTemplate.update(insertMealSql, mealPlanId, randomRecipeId, date, mealType);
+            }
+        }
+    }
+
+
 }

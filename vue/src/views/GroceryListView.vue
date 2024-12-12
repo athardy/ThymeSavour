@@ -1,44 +1,36 @@
 <template>
-    <div class="grocery-list">
-      <h1>Your Grocery List</h1>
-      <ul>
-        <li v-for="item in groceryList" :key="item.ingredient_id">
-          {{ item.total_quantity }} {{ item.unit }} of {{ item.ingredient_name }}
-        </li>
-      </ul>
-    </div>
-  </template>
-  
-  <script>
-  import axios from "axios";
-  
-  export default {
-    data() {
-      return {
-        groceryList: [],
-      };
-    },
-    methods: {
-      fetchGroceryList() {
-        axios
-          .get(`${import.meta.env.VITE_REMOTE_API}/grocery-list`, {
-            headers: { Authorization: `Bearer ${this.$store.state.token}` },
-          })
-          .then((response) => {
-            this.groceryList = response.data;
-          })
-          .catch((error) => console.error("Error fetching grocery list:", error));
-      },
-    },
-    mounted() {
-      this.fetchGroceryList();
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .grocery-list {
-    max-width: 600px;
-    margin: auto;
-  }
-  </style>
+  <div class="grocery-list">
+    <h1>Coming Soon!</h1>
+    <p>Stay tuned for your personalized grocery list feature.</p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "GroceryListView",
+};
+</script>
+
+<style scoped>
+.grocery-list {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #4d8c5e;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  color: #555;
+  font-size: 1.2rem;
+}
+</style>

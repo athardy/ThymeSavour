@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface RecipeDao {
 
+
     List<Recipe> getRecipesByUserId(int userId);  // Get recipes by user
 
     Recipe getRecipeById(int recipeId);  // Get a specific recipe by its ID
