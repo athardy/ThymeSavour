@@ -2,6 +2,16 @@
   <div class="my-recipes">
     <h1>My Recipes</h1>
 
+    <!-- Search Box -->
+    <div class="search-box">
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="Search recipes..."
+        class="search-input"
+      />
+    </div>
+
     <!-- Create Recipe Button -->
     <div class="create-recipe">
       <router-link to="/create-recipe" class="create-button">
@@ -11,14 +21,20 @@
 
     <!-- Recipes List -->
     <div class="recipes-list">
-      <div class="recipe-card" v-for="recipe in recipes" :key="recipe.recipe_id">
+      <div
+        class="recipe-card"
+        v-for="recipe in filteredRecipes"
+        :key="recipe.recipe_id"
+      >
         <h3>{{ recipe.recipe_name }}</h3>
         <p>{{ recipe.description }}</p>
         <div class="actions">
           <router-link :to="{ name: 'recipe-details', params: { id: recipe.recipe_id } }">
             <button class="view-button">View</button>
           </router-link>
-          <button @click="deleteRecipe(recipe.recipe_id)" class="delete-button">Delete</button>
+          <button @click="deleteRecipe(recipe.recipe_id)" class="delete-button">
+            Delete
+          </button>
         </div>
       </div>
     </div>
@@ -32,7 +48,20 @@ export default {
   data() {
     return {
       recipes: [],
+      searchQuery: "", // Search query for filtering
     };
+  },
+  computed: {
+    // Computed property to filter recipes
+    filteredRecipes() {
+      if (!this.searchQuery) {
+        return this.recipes; // Return all recipes if no search query
+      }
+      const query = this.searchQuery.toLowerCase();
+      return this.recipes.filter((recipe) =>
+        recipe.recipe_name.toLowerCase().includes(query)
+      );
+    },
   },
   methods: {
     fetchRecipes() {
@@ -79,6 +108,19 @@ export default {
   padding: 2rem;
   background-color: #d3f1df;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.search-box {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.search-input {
+  padding: 0.5rem;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .create-recipe {
