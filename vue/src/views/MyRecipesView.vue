@@ -52,15 +52,19 @@ export default {
     };
   },
   computed: {
-    // Computed property to filter recipes
+    // Computed property to filter and sort recipes alphabetically
     filteredRecipes() {
       if (!this.searchQuery) {
-        return this.recipes; // Return all recipes if no search query
+        return this.recipes.sort((a, b) =>
+          a.recipe_name.localeCompare(b.recipe_name)
+        ); // Sort recipes alphabetically
       }
       const query = this.searchQuery.toLowerCase();
-      return this.recipes.filter((recipe) =>
-        recipe.recipe_name.toLowerCase().includes(query)
-      );
+      return this.recipes
+        .filter((recipe) =>
+          recipe.recipe_name.toLowerCase().includes(query)
+        )
+        .sort((a, b) => a.recipe_name.localeCompare(b.recipe_name)); // Sort filtered recipes alphabetically
     },
   },
   methods: {

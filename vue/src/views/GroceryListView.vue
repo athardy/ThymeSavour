@@ -1,13 +1,90 @@
 <template>
   <div class="grocery-list">
-    <h1>Coming Soon!</h1>
-    <p>Stay tuned for your personalized grocery list feature.</p>
+    <h1>Generate Grocery List</h1>
+
+    <!-- Select Recipe -->
+    <div class="form-group">
+      <label for="recipe-select">Select a Recipe:</label>
+      <select v-model="selectedRecipeId" @change="fetchRecipeDetails" class="input-field">
+        <option value="" disabled>Select a recipe</option>
+        <option
+          v-for="recipe in recipes"
+          :key="recipe.recipe_id"
+          :value="recipe.recipe_id"
+        >
+          {{ recipe.recipe_name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Display Ingredients -->
+    <div v-if="selectedRecipe && selectedRecipe.ingredients.length > 0" class="recipe-ingredients">
+      <h2>Grocery List for {{ selectedRecipe.recipe_name }}</h2>
+      <ul>
+        <li
+          v-for="(ingredient, index) in selectedRecipe.ingredients"
+          :key="index"
+        >
+          {{ ingredient.quantity }} {{ ingredient.unit }} - {{ ingredient.ingredient_name }}
+        </li>
+      </ul>
+      <button @click="printGroceryList" class="nav-button print-btn">Print Grocery List</button>
+    </div>
+
+    <div v-else-if="selectedRecipe">
+      <p>This recipe has no ingredients listed.</p>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "GroceryListView",
+  data() {
+    return {
+      recipes: [],
+      selectedRecipeId: null,
+      selectedRecipe: null,
+    };
+  },
+  methods: {
+    async fetchRecipes() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_REMOTE_API}/recipes/my-recipes`,
+          { params: { userId: this.$store.state.userId } }
+        );
+        this.recipes = response.data;
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+        alert("Failed to load recipes. Please try again.");
+      }
+    },
+    async fetchRecipeDetails() {
+      if (!this.selectedRecipeId) return;
+
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_REMOTE_API}/recipes/${this.selectedRecipeId}`
+        );
+        this.selectedRecipe = response.data;
+      } catch (error) {
+        console.error("Error fetching recipe details:", error);
+        alert("Failed to load recipe details. Please try again.");
+      }
+    },
+    printGroceryList() {
+      const printContent = document.querySelector(".recipe-ingredients");
+      const newWindow = window.open("", "_blank");
+      newWindow.document.write(`<html><body>${printContent.innerHTML}</body></html>`);
+      newWindow.print();
+    },
+  },
+  mounted() {
+    this.fetchRecipes();
+  },
 };
 </script>
 
@@ -29,8 +106,43 @@ h1 {
   margin-bottom: 1rem;
 }
 
-p {
-  color: #555;
-  font-size: 1.2rem;
+.form-group {
+  margin-bottom: 20px;
+}
+
+.input-field {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.recipe-ingredients {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.recipe-ingredients ul {
+  list-style: none;
+  padding: 0;
+}
+
+.recipe-ingredients li {
+  margin: 10px 0;
+}
+
+.nav-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #64a472;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #4d8c5e;
 }
 </style>
