@@ -13,7 +13,7 @@ public class RecipeIngredientDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Method to link ingredients to a recipe in the recipe_ingredient table
+
     public void linkIngredientToRecipe(int recipeId, int ingredientId, double quantity, String unit) {
         String sql = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, recipeId, ingredientId, quantity, unit);

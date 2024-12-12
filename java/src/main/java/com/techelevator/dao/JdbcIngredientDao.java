@@ -1,6 +1,7 @@
 package com.techelevator.dao;
 
 import com.techelevator.model.Ingredient;
+import com.techelevator.model.IngredientType;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -85,5 +86,13 @@ public class JdbcIngredientDao implements IngredientDao {
         } catch (EmptyResultDataAccessException e) {
             return null; // Return null if no ingredient is found
         }
+    }
+    @Override
+    public List<IngredientType> getAllIngredientTypes() {
+        String sql = "SELECT type_id, type_name FROM ingredient_type";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new IngredientType(
+                rs.getInt("type_id"),
+                rs.getString("type_name")
+        ));
     }
 }

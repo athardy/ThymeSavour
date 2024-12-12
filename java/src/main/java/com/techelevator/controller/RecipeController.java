@@ -6,6 +6,8 @@ import com.techelevator.dao.RecipeIngredientDao;
 import com.techelevator.model.Recipe;
 import com.techelevator.model.RecipeIngredient;
 import com.techelevator.model.Ingredient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.techelevator.dao.UserDao;  
 
@@ -56,54 +58,49 @@ public class RecipeController {
 
     // Endpoint to create a new recipe
     @PostMapping
-    public String createRecipe(@RequestBody Recipe recipe) {
-        // Save the recipe to the database
-        recipeDao.createRecipe(recipe);
-
-        // Handle ingredients: update or create as necessary
-        for (RecipeIngredient recipeIngredient : recipe.getIngredients()) {
-            Ingredient ingredient = ingredientDao.getIngredientByName(recipeIngredient.getIngredient_name());
-
-            // If the ingredient doesn't exist, create it
-            if (ingredient == null) {
-                ingredient = new Ingredient();
-                ingredient.setIngredient_name(recipeIngredient.getIngredient_name());
-                ingredient.setType_id(recipeIngredient.getType_id());
-                ingredientDao.createIngredient(ingredient);  // Insert the new ingredient
-            }
-
-            // Link the ingredient to the recipe in the recipe_ingredient table
-            recipeIngredient.setIngredient_id(ingredient.getIngredient_id());  // Set the correct ingredient_id
-            recipeIngredientDao.linkIngredientToRecipe(recipe.getRecipe_id(), ingredient.getIngredient_id(), recipeIngredient.getQuantity(), recipeIngredient.getUnit());
+    public ResponseEntity<?> createRecipe(@RequestBody Recipe recipe, Principal principal) {
+        try {
+            // Get the user ID from the principal
+            int userId = userDao.getUserByUsername(principal.getName()).getId();
+            recipe.setAuthor(userId); // Set the author ID in the recipe object
+            recipeDao.createRecipe(recipe); // Save the recipe
+            return ResponseEntity.ok(recipe); // Return the saved recipe object
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating recipe: " + e.getMessage());
         }
-
-        return "Recipe created successfully!";
     }
 
-    // Endpoint to update a recipe (including its ingredients)
     @PutMapping("/{recipeId}")
-    public String updateRecipe(@PathVariable int recipeId, @RequestBody Recipe recipe) {
-        // Update the recipe details
-        recipeDao.updateRecipe(recipe);
-
-        // Handle ingredients: update or create as necessary
-        for (RecipeIngredient recipeIngredient : recipe.getIngredients()) {
-            Ingredient ingredient = ingredientDao.getIngredientByName(recipeIngredient.getIngredient_name());
-
-            // If the ingredient doesn't exist, create it
-            if (ingredient == null) {
-                ingredient = new Ingredient();
-                ingredient.setIngredient_name(recipeIngredient.getIngredient_name());
-                ingredient.setType_id(recipeIngredient.getType_id());
-                ingredientDao.createIngredient(ingredient);  // Insert the new ingredient
+    public ResponseEntity<String> updateRecipe(@PathVariable int recipeId, @RequestBody Recipe recipe) {
+        for (RecipeIngredient ingredient : recipe.getIngredients()) {
+            System.out.println("Validating ingredient: " + ingredient);
+            if (ingredient.getIngredient_name() == null || ingredient.getIngredient_name().isEmpty()) {
+                System.out.println("Invalid ingredient name: " + ingredient);
+                return ResponseEntity.badRequest().body("Ingredient name cannot be null or empty");
             }
-
-            // Link the ingredient to the recipe in the recipe_ingredient table
-            recipeIngredient.setIngredient_id(ingredient.getIngredient_id());  // Set the correct ingredient_id
-            recipeIngredientDao.linkIngredientToRecipe(recipeId, ingredient.getIngredient_id(), recipeIngredient.getQuantity(), recipeIngredient.getUnit());
+            if (ingredient.getQuantity() <= 0 || ingredient.getUnit() == null || ingredient.getUnit().isEmpty()) {
+                System.out.println("Invalid quantity or unit for ingredient: " + ingredient);
+                return ResponseEntity.badRequest().body("Invalid quantity or unit for ingredient");
+            }
+        }
+        try {
+            for (RecipeIngredient ingredient : recipe.getIngredients()) {
+                if (ingredient.getIngredient_name() == null || ingredient.getIngredient_name().isEmpty()) {
+                    return ResponseEntity.badRequest().body("Ingredient name cannot be null or empty");
+                }
+                if (ingredient.getQuantity() <= 0 || ingredient.getUnit() == null || ingredient.getUnit().isEmpty()) {
+                    return ResponseEntity.badRequest().body("Invalid quantity or unit for ingredient");
+                }
+            }
+            recipeDao.updateRecipe(recipe);
+            return ResponseEntity.ok("Recipe updated successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating recipe: " + e.getMessage());
         }
 
-        return "Recipe updated successfully!";
     }
 
     // Endpoint to delete a recipe by its ID (soft delete)
@@ -131,4 +128,34 @@ public List<Recipe> getRecipesByUserId(Principal principal) {
     int userId = userDao.getUserByUsername(principal.getName()).getId();
     return recipeDao.getRecipesByUserId(userId);
 }
+    @PostMapping("/link-ingredient")
+    public ResponseEntity<String> linkIngredientToRecipe(@RequestBody RecipeIngredient recipeIngredient) {
+        try {
+            System.out.println("Incoming request to link ingredient: " + recipeIngredient);
+            recipeIngredientDao.linkIngredientToRecipe(
+                    recipeIngredient.getRecipe_id(),
+                    recipeIngredient.getIngredient_id(),
+                    recipeIngredient.getQuantity(),
+                    recipeIngredient.getUnit()
+            );
+            return ResponseEntity.ok("Ingredient linked to recipe successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error linking ingredient: " + e.getMessage());
+        }
+    }
+    @DeleteMapping("/{recipeId}/ingredients/{ingredientId}")
+    public ResponseEntity<String> deleteIngredientFromRecipe(
+            @PathVariable int recipeId,
+            @PathVariable int ingredientId
+    ) {
+        try {
+            recipeIngredientDao.deleteIngredientFromRecipe(recipeId, ingredientId);
+            return ResponseEntity.ok("Ingredient removed successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error removing ingredient: " + e.getMessage());
+        }
+    }
 }

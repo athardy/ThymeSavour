@@ -94,21 +94,13 @@ public List<Recipe> getRecipesByUserId(int userId) {
     public void createRecipe(Recipe recipe) {
         String sql = "INSERT INTO recipes (recipe_name, description, instructions, author, date_added) " +
                 "VALUES (?, ?, ?, ?, ?) RETURNING recipe_id";
-        int recipeId = jdbcTemplate.queryForObject(sql, Integer.class, recipe.getRecipe_name(),
-                recipe.getDescription(), recipe.getInstructions(), recipe.getAuthor(), recipe.getDate_added());
+        int recipeId = jdbcTemplate.queryForObject(sql, Integer.class,
+                recipe.getRecipe_name(),
+                recipe.getDescription(),
+                recipe.getInstructions(),
+                recipe.getAuthor(), // Ensure the author is provided
+                recipe.getDate_added());
         recipe.setRecipe_id(recipeId);
-
-        for (RecipeIngredient ingredient : recipe.getIngredients()) {
-            Ingredient existingIngredient = ingredientDao.getIngredientByName(ingredient.getIngredient_name());
-            if (existingIngredient == null) {
-                Ingredient newIngredient = new Ingredient();
-                newIngredient.setIngredient_name(ingredient.getIngredient_name());
-                newIngredient.setType_id(ingredient.getType_id());
-                ingredientDao.createIngredient(newIngredient);
-                existingIngredient = newIngredient;
-            }
-            recipeIngredientDao.linkIngredientToRecipe(recipeId, existingIngredient.getIngredient_id(), ingredient.getQuantity(), ingredient.getUnit());
-        }
     }
 
     @Override

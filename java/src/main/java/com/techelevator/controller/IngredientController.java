@@ -2,6 +2,7 @@ package com.techelevator.controller;
 
 import com.techelevator.dao.IngredientDao;
 import com.techelevator.model.Ingredient;
+import com.techelevator.model.IngredientType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,6 +55,10 @@ public ResponseEntity<String> createIngredient(@RequestBody Ingredient ingredien
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
         }
+    }
+    @GetMapping("/types")
+    public List<IngredientType> getAllIngredientTypes() {
+        return ingredientDao.getAllIngredientTypes();
     }
 
     }

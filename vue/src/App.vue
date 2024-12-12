@@ -20,7 +20,7 @@
         </router-link>
 
         <router-link v-if="$store.state.token" to="/grocery-list" class="nav-button">
-          Grocery List<img src="src/assets/banner_grocery_list.png" alt="Grocery List Icon" />
+          Grocery Lists<img src="src/assets/banner_grocery_list.png" alt="Grocery List Icon" />
         </router-link>
 
         <router-link to="/about" class="nav-button">
