@@ -16,7 +16,7 @@
           </p>
         </div>
         <div class="image">
-          <img src="src/assets/intro_image.jpg" alt="Intro Image" />
+          <img src="src/assets/landing_welcome.png" alt="Intro Image" />
         </div>
       </section>
 
@@ -31,7 +31,7 @@
           </p>
         </div>
         <div class="image">
-          <img src="src/assets/features_image.jpg" alt="Features Image" />
+          <img src="src/assets/landing_features.png" alt="Features Image" />
         </div>
       </section>
 
@@ -45,7 +45,7 @@
           </p>
         </div>
         <div class="image">
-          <img src="src/assets/get_started_image.jpg" alt="Get Started Image" />
+          <img src="src/assets/landing_signup.png" alt="Get Started Image" />
         </div>
       </section>
     </main>
@@ -120,8 +120,10 @@ section .text {
   padding-right: 2rem;
 }
 
+/* scaled images 50% */
 section .image {
   flex: 1;
+  scale: 50%;
   padding-left: 2rem;
 }
 

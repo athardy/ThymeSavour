@@ -33,8 +33,8 @@
         </button>
 
         <!-- Login/Register buttons -->
-        <router-link v-if="!$store.state.token" to="/login" class="nav-button">Login</router-link>
-        <router-link v-if="!$store.state.token" to="/register" class="nav-button">Register</router-link>
+        <router-link v-if="!$store.state.token" to="/login" class="nav-button">Login<img src="src/assets/banner_login.png" alt="Home Icon" /></router-link>
+        <router-link v-if="!$store.state.token" to="/register" class="nav-button">Register<img src="src/assets/banner_register.png" alt="Home Icon" /></router-link>
       </nav>
     </header>
 
