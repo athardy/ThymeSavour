@@ -1,7 +1,38 @@
 <template>
   <div class="grocery-list">
     <h1>Generate Grocery List</h1>
+    <!-- Select Meal Plan -->
+    <div class="form-group">
+      <label for="meal-plan-select">Select a Meal Plan:</label>
+      <select v-model="selectedMealPlanId" @change="fetchGroceryListByMealPlan" class="input-field">
+  <option value="" disabled>Select a meal plan</option>
+  <option
+    v-for="mealPlan in mealPlans"
+    :key="mealPlan.meal_plan_id"
+    :value="mealPlan.meal_plan_id"
+  >
+    {{ mealPlan.meal_plan_name }}
+  </option>
+</select>
+    </div>
 
+    <!-- Display Grocery List -->
+    <div v-if="groceryList.length > 0" class="recipe-ingredients">
+      <h2>Grocery List</h2>
+      <ul>
+        <li
+          v-for="(item, index) in groceryList"
+          :key="index"
+        >
+          {{ item.total_quantity }} {{ item.unit }} - {{ item.ingredient_name }}
+        </li>
+      </ul>
+      <button @click="printGroceryList" class="nav-button print-btn">Print Grocery List</button>
+    </div>
+
+    <div v-else-if="selectedMealPlanId">
+      <p>No items found for this meal plan.</p>
+    </div>
     <!-- Select Recipe -->
     <div class="form-group">
       <label for="recipe-select">Select a Recipe:</label>
@@ -47,9 +78,55 @@ export default {
       recipes: [],
       selectedRecipeId: null,
       selectedRecipe: null,
+      mealPlans: [],
+      selectedMealPlanId: null,
+      groceryList: [],
     };
   },
   methods: {
+    async fetchGroceryListByMealPlan() {
+  if (!this.selectedMealPlanId) {
+    alert("Please select a meal plan first.");
+    return;
+  }
+
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_REMOTE_API}/meal-plans/${this.selectedMealPlanId}/ingredients`,
+      { headers: { Authorization: `Bearer ${this.$store.state.token}` } }
+    );
+
+    if (response.data && Array.isArray(response.data)) {
+      this.groceryList = response.data;
+      console.log("Fetched grocery list:", this.groceryList);
+    } else {
+      console.warn("Unexpected response structure:", response.data);
+      this.groceryList = [];
+    }
+  } catch (error) {
+    console.error("Error fetching grocery list:", error.response?.data || error.message);
+    alert("Failed to load grocery list. Please try again.");
+  }
+},
+    async fetchMealPlans() {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_REMOTE_API}/meal-plans/all`,
+      { headers: { Authorization: `Bearer ${this.$store.state.token}` } }
+    );
+
+    if (response.data && Array.isArray(response.data)) {
+      this.mealPlans = response.data.filter(
+        (plan) => plan.user_id === this.$store.state.user.id
+      );
+    } else {
+      console.warn("Unexpected response structure:", response.data);
+    }
+  } catch (error) {
+    console.error("Error fetching meal plans:", error.response?.data || error.message);
+    alert("Failed to load meal plans. Please try again.");
+  }
+    },
     async fetchRecipes() {
       try {
         const response = await axios.get(
@@ -83,6 +160,7 @@ export default {
     },
   },
   mounted() {
+    this.fetchMealPlans();
     this.fetchRecipes();
   },
 };

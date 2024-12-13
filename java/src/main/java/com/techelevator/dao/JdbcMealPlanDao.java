@@ -171,5 +171,69 @@ public MealPlan getMealPlanById(int mealPlanId) {
         jdbcTemplate.update(sql, mealPlanId);
     }
 
+    public void fillEmptyMeals(int mealPlanId) {
+        String fetchRecipesSql = "SELECT recipe_id FROM recipes WHERE is_deleted = FALSE";
+        List<Integer> recipeIds = jdbcTemplate.queryForList(fetchRecipesSql, Integer.class);
+
+        if (recipeIds.isEmpty()) {
+            throw new RuntimeException("No recipes available to fill meals.");
+        }
+
+        String fetchMealPlanDatesSql = "SELECT start_date, end_date FROM meal_plan WHERE meal_plan_id = ?";
+        Map<String, Object> mealPlanDates = jdbcTemplate.queryForMap(fetchMealPlanDatesSql, mealPlanId);
+
+        LocalDate startDate = ((Date) mealPlanDates.get("start_date")).toLocalDate();
+        LocalDate endDate = ((Date) mealPlanDates.get("end_date")).toLocalDate();
+
+        String fetchExistingMealsSql = "SELECT meal_date, meal_type FROM meals WHERE meal_plan_id = ?";
+        List<Map<String, Object>> existingMeals = jdbcTemplate.queryForList(fetchExistingMealsSql, mealPlanId);
+
+        Set<String> occupiedSlots = new HashSet<>();
+        for (Map<String, Object> meal : existingMeals) {
+            occupiedSlots.add(meal.get("meal_date") + ":" + meal.get("meal_type"));
+        }
+
+        String insertMealSql = "INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES (?, ?, ?, ?)";
+        Random random = new Random();
+        String[] mealTypes = {"Breakfast", "Lunch", "Dinner", "Snack 1", "Snack 2"};
+
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            for (String mealType : mealTypes) {
+                String slotKey = date + ":" + mealType;
+                if (!occupiedSlots.contains(slotKey)) {
+                    int randomRecipeId = recipeIds.get(random.nextInt(recipeIds.size()));
+                    jdbcTemplate.update(insertMealSql, mealPlanId, randomRecipeId, Date.valueOf(date), mealType);
+                }
+            }
+        }
+    }
+    @Override
+    public List<Map<String, Object>> getGroceryListByMealPlan(int mealPlanId) {
+        String sql =
+                "SELECT " +
+                        "    i.ingredient_id, " +
+                        "    i.ingredient_name, " +
+                        "    ri.unit, " +
+                        "    SUM(ri.quantity) AS total_quantity " +
+                        "FROM " +
+                        "    meal_plan mp " +
+                        "JOIN " +
+                        "    meals m " +
+                        "    ON mp.meal_plan_id = m.meal_plan_id " +
+                        "JOIN " +
+                        "    recipe_ingredient ri " +
+                        "    ON ri.recipe_id = m.recipe_id " +
+                        "JOIN " +
+                        "    ingredients i " +
+                        "    ON ri.ingredient_id = i.ingredient_id " +
+                        "WHERE " +
+                        "    mp.meal_plan_id = ? " +
+                        "GROUP BY " +
+                        "    i.ingredient_id, " +
+                        "    i.ingredient_name, " +
+                        "    ri.unit";
+
+        return jdbcTemplate.queryForList(sql, mealPlanId);
+    }
 
 }

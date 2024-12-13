@@ -131,17 +131,25 @@ public List<Recipe> getRecipesByUserId(Principal principal) {
     @PostMapping("/link-ingredient")
     public ResponseEntity<String> linkIngredientToRecipe(@RequestBody RecipeIngredient recipeIngredient) {
         try {
-            System.out.println("Incoming request to link ingredient: " + recipeIngredient);
+            System.out.println("Incoming request to link ingredient:");
+            System.out.println("Recipe ID: " + recipeIngredient.getRecipe_id());
+            System.out.println("Ingredient ID: " + recipeIngredient.getIngredient_id());
+            System.out.println("Quantity: " + recipeIngredient.getQuantity());
+            System.out.println("Unit: " + recipeIngredient.getUnit());
+
+            // Perform the link operation
             recipeIngredientDao.linkIngredientToRecipe(
                     recipeIngredient.getRecipe_id(),
                     recipeIngredient.getIngredient_id(),
                     recipeIngredient.getQuantity(),
                     recipeIngredient.getUnit()
             );
+
             return ResponseEntity.ok("Ingredient linked to recipe successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error linking ingredient: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error linking ingredient: " + e.getMessage());
         }
     }
     @DeleteMapping("/{recipeId}/ingredients/{ingredientId}")

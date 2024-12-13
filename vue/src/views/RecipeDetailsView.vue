@@ -140,7 +140,7 @@
 
           <!-- Save and Cancel Buttons -->
           <div class="edit-button-group">
-            <button type="submit" class="nav-button save-btn">Save Changes</button>
+            <button type="submit" @click="saveIngredients" class="nav-button save-btn">Save Changes</button>
             <button @click="cancelEditing" class="nav-button cancel-btn">Cancel</button>
           </div>
         </form>
@@ -267,28 +267,30 @@ export default {
       }
     },
     addExistingIngredient() {
-      if (
-        this.selectedIngredientId &&
-        this.selectedIngredientQuantity > 0 &&
-        this.selectedIngredientUnit
-      ) {
-        const ingredient = this.availableIngredients.find(
-          (ing) => ing.ingredient_id === this.selectedIngredientId
-        );
-        if (ingredient) {
-          this.recipe.ingredients.push({
-            ...ingredient,
-            quantity: this.selectedIngredientQuantity,
-            unit: this.selectedIngredientUnit,
-          });
-          this.selectedIngredientId = null;
-          this.selectedIngredientQuantity = 0;
-          this.selectedIngredientUnit = "";
-        }
-      } else {
-        alert("Please select an ingredient, enter a quantity, and a unit.");
+    if (
+      this.selectedIngredientId &&
+      this.selectedIngredientQuantity > 0 &&
+      this.selectedIngredientUnit
+    ) {
+      const ingredient = this.availableIngredients.find(
+        (ing) => ing.ingredient_id === this.selectedIngredientId
+      );
+      if (ingredient) {
+        const newIngredient = {
+          ...ingredient,
+          quantity: this.selectedIngredientQuantity,
+          unit: this.selectedIngredientUnit,
+        };
+        console.log("Adding ingredient to recipe:", newIngredient);
+        this.recipe.ingredients.push(newIngredient);
+        this.selectedIngredientId = null;
+        this.selectedIngredientQuantity = 0;
+        this.selectedIngredientUnit = "";
       }
-    },
+    } else {
+      alert("Please select an ingredient, enter a quantity, and a unit.");
+    }
+  },
     async removeIngredientFromRecipe(ingredient) {
       try {
         await axios.delete(
@@ -350,61 +352,151 @@ export default {
   }
 },
 async saveIngredients() {
-  const ingredientPromises = this.recipe.ingredients.map((ingredient) => {
-    const payload = {
-      recipe_id: this.recipe.recipe_id,
-      ingredient_id: ingredient.ingredient_id,
-      quantity: ingredient.quantity,
-      unit: ingredient.unit,
-    };
-    return axios.post(`${import.meta.env.VITE_REMOTE_API}/recipes/link-ingredient`, payload);
-  });
-  try {
-    await Promise.all(ingredientPromises);
-    alert("Ingredients updated successfully!");
-  } catch (error) {
-    console.error("Error updating ingredients:", error);
-    alert("Failed to update ingredients. Please try again.");
-  }
-},
+    if (!this.recipe.ingredients || this.recipe.ingredients.length === 0) {
+      alert("No ingredients to save.");
+      return;
+    }
+
+    for (const ingredient of this.recipe.ingredients) {
+      const payload = {
+        recipe_id: this.recipe.recipe_id,
+        ingredient_id: ingredient.ingredient_id,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+      };
+
+      console.log("Saving ingredient:", payload);
+
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_REMOTE_API}/recipes/link-ingredient`,
+          payload,
+          { headers: { Authorization: `Bearer ${this.$store.state.token}` } }
+        );
+        console.log("Ingredient save response:", response.data);
+      } catch (error) {
+        console.error(
+          "Error saving ingredient:",
+          error.response?.data || error.message
+        );
+      }
+    }
+
+    alert("Ingredients saved successfully!");
+  },
 
   },
 };
 </script>
 
 <style scoped>
-.card-view {
-  background-color: #f9f9f9;
-  padding: 20px;
+/* Recipe Card Container */
+.recipe-card {
+  background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 800px;
 }
 
-.attached-ingredients ul {
-  list-style-type: none;
-  padding: 0;
+/* Recipe Title */
+.recipe-title {
+  font-size: 1.8rem;
+  font-family: 'Poppins', sans-serif;
+  color: #3b5b3b;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Form Styling */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-field,
+.textarea-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.input-field:focus,
+.textarea-field:focus {
+  border-color: #64a472;
+  outline: none;
+}
+
+/* Ingredients List */
+.attached-ingredients {
+  margin-top: 20px;
+}
+
+.attached-ingredients h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #3b5b3b;
 }
 
 .ingredient-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0;
+  padding: 5px 10px;
+  margin: 5px 0;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.remove-btn {
-  background: transparent;
+.ingredient-item button {
+  background: none;
   border: none;
-  color: red;
+  color: #d9534f;
   cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* Drawers */
+.drawer {
+  background-color: #f7f7f7;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  margin-top: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-toggle {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #3b5b3b;
+  cursor: pointer;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+/* Action Buttons Group */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .nav-button {
-  padding: 10px 20px;
-  border-radius: 5px;
   background-color: #64a472;
   color: white;
-  font-size: 16px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -413,41 +505,55 @@ async saveIngredients() {
   background-color: #4d8c5e;
 }
 
-.card-view {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-width: 600px; /* Adjust card width */
-  margin: auto;
+/* Specific Button Styles */
+.nav-button.print-btn {
+  background-color: #64a472; /* Same green */
 }
 
-.ingredient-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
+.nav-button.edit-btn {
+  background-color: #64a472; /* Same green */
 }
 
-.remove-btn {
-  margin-left: 10px; /* Bring closer to the ingredient */
-  background: transparent;
-  border: none;
-  color: red;
-  cursor: pointer;
+.nav-button.back-btn {
+  background-color: #64a472; /* Same green */
 }
 
-.textarea-field {
-  resize: none; /* Make textareas non-resizable */
+/* Print Section */
+.print-content {
+  font-size: 1rem;
+  color: #333;
 }
 
-.form-group {
-  margin-bottom: 20px; /* Consistent spacing */
+.print-content ul {
+  list-style-type: none;
+  padding: 0;
 }
 
+.print-content li {
+  margin-bottom: 5px;
+}
+
+/* Edit Button Group */
 .edit-button-group {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .recipe-card {
+    padding: 15px;
+  }
+
+  .form {
+    gap: 15px;
+  }
+
+  .nav-button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+  }
 }
 </style>

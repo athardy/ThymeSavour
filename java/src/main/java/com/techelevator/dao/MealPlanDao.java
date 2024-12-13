@@ -22,4 +22,8 @@ public interface MealPlanDao {
     void generateMealsForPlan(int mealPlanId);
 
     void deleteMealPlan(int mealPlanId);
+
+    void fillEmptyMeals(int mealPlanId);
+
+    List<Map<String, Object>> getGroceryListByMealPlan(int mealPlanId);
 }

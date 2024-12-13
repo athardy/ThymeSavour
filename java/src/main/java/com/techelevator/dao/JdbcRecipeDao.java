@@ -138,5 +138,26 @@ public List<Recipe> getRecipesByUserId(int userId) {
         return jdbcTemplate.queryForList(sql, String.class, userId);
     }
 
+    public void linkIngredientToRecipe(int recipeId, int ingredientId, double quantity, String unit) {
+        String sql = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id, quantity, unit) " +
+                "VALUES (?, ?, ?, ?) " +
+                "ON CONFLICT (recipe_id, ingredient_id) " +
+                "DO UPDATE SET quantity = EXCLUDED.quantity, unit = EXCLUDED.unit";
+
+        try {
+            System.out.println("Executing query:");
+            System.out.println(sql);
+            System.out.println("Parameters: " + recipeId + ", " + ingredientId + ", " + quantity + ", " + unit);
+
+            jdbcTemplate.update(sql, recipeId, ingredientId, quantity, unit);
+
+            System.out.println("Ingredient linked successfully.");
+        } catch (Exception e) {
+            System.err.println("Error linking ingredient: " + e.getMessage());
+            throw e;
+        }
+    }
+
+
     
 }
