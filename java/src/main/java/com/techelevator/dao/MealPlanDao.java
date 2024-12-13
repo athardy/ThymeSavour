@@ -20,4 +20,6 @@ public interface MealPlanDao {
     List<Map<String, Object>> getMealsWithRecipes(int mealPlanId);
 
     void generateMealsForPlan(int mealPlanId);
+
+    void deleteMealPlan(int mealPlanId);
 }

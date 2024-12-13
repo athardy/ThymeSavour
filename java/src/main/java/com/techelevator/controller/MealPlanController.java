@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,34 +37,40 @@ public class MealPlanController {
         this.recipeDao = recipeDao;
     }
 
+
+
     @PostMapping
     public ResponseEntity<String> createMealPlan(@RequestBody MealPlan mealPlan, Principal principal) {
         try {
-            // Convert java.util.Date to LocalDate
-            LocalDate startLocalDate = mealPlan.getStart_date().toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .plusDays(1);
+            System.out.println("Debug: Received request to create meal plan.");
+            System.out.println("Name: " + mealPlan.getMeal_plan_name());
+            System.out.println("Start Date: " + mealPlan.getStart_date());
+            System.out.println("End Date: " + mealPlan.getEnd_date());
 
-            LocalDate endLocalDate = mealPlan.getEnd_date().toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .plusDays(1);
+            // Ensure start_date and end_date are in java.sql.Date format
+            Date startDate = new java.sql.Date(mealPlan.getStart_date().getTime());
+            Date endDate = new java.sql.Date(mealPlan.getEnd_date().getTime());
 
-            // Convert LocalDate back to java.util.Date
-            mealPlan.setStart_date(Date.from(startLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            mealPlan.setEnd_date(Date.from(endLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            mealPlan.setStart_date(startDate);
+            mealPlan.setEnd_date(endDate);
 
-            // Retrieve user ID
+            // Validate input
+            if (startDate.after(endDate)) {
+                return ResponseEntity.badRequest().body("Start date cannot be after the end date.");
+            }
+
+            // Fetch user ID from Principal
             int userId = userDao.getUserByUsername(principal.getName()).getId();
             mealPlan.setUser_id(userId);
 
-            // Save the meal plan
+            // Persist the meal plan
             mealPlanDao.createMealPlan(mealPlan);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Meal plan created successfully!");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating meal plan: " + e.getMessage());
+            System.err.println("Error creating meal plan: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error creating meal plan: " + e.getMessage());
         }
     }
 
@@ -170,7 +178,6 @@ public ResponseEntity<MealPlan> getMealPlanById(@PathVariable int meal_plan_id) 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
     @PostMapping("/{meal_plan_id}/generate-meals")
     public ResponseEntity<String> generateMeals(@PathVariable int meal_plan_id) {
         try {
@@ -189,6 +196,17 @@ public ResponseEntity<MealPlan> getMealPlanById(@PathVariable int meal_plan_id) 
             return ResponseEntity.ok(groceryList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    @DeleteMapping("/{meal_plan_id}")
+    public ResponseEntity<String> deleteMealPlan(@PathVariable int meal_plan_id) {
+        try {
+            mealPlanDao.deleteMealPlan(meal_plan_id); // Ensure `deleteMealPlan` exists in your DAO
+            return ResponseEntity.ok("Meal plan deleted successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting meal plan: " + e.getMessage());
         }
     }
 

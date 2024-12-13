@@ -20,7 +20,26 @@ public class JdbcMealPlanDao implements MealPlanDao {
     @Override
     public void createMealPlan(MealPlan mealPlan) {
         String sql = "INSERT INTO meal_plan (meal_plan_name, user_id, start_date, end_date) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, mealPlan.getMeal_plan_name(), mealPlan.getUser_id(), mealPlan.getStart_date(), mealPlan.getEnd_date());
+
+        try {
+            System.out.println("Debug: Creating meal plan with:");
+            System.out.println("Name: " + mealPlan.getMeal_plan_name());
+            System.out.println("Start Date: " + mealPlan.getStart_date());
+            System.out.println("End Date: " + mealPlan.getEnd_date());
+            System.out.println("User ID: " + mealPlan.getUser_id());
+
+            jdbcTemplate.update(sql,
+                    mealPlan.getMeal_plan_name(),
+                    mealPlan.getUser_id(),
+                    mealPlan.getStart_date(),
+                    mealPlan.getEnd_date() // Use correct getter
+            );
+
+            System.out.println("Debug: Meal plan created successfully!");
+        } catch (Exception e) {
+            System.err.println("Error creating meal plan: " + e.getMessage());
+            throw e; // Re-throw exception for higher-level handling
+        }
     }
 
     @Override
@@ -102,7 +121,6 @@ public MealPlan getMealPlanById(int mealPlanId) {
         String sql = "INSERT INTO meals (meal_plan_id, recipe_id, meal_date, meal_type) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, meal.getMeal_plan_id(), meal.getRecipe_id(), meal.getMeal_date(), meal.getMeal_type());
     }
-    @Override
     public List<Map<String, Object>> getMealsWithRecipes(int mealPlanId) {
         String sql = "SELECT m.meal_id, m.meal_date, m.meal_type, r.recipe_id, r.recipe_name, r.description " +
                 "FROM meals m " +
@@ -145,6 +163,12 @@ public MealPlan getMealPlanById(int mealPlanId) {
                 jdbcTemplate.update(insertMealSql, mealPlanId, randomRecipeId, date, mealType);
             }
         }
+    }
+
+    @Override
+    public void deleteMealPlan(int mealPlanId) {
+        String sql = "DELETE FROM meal_plan WHERE meal_plan_id = ?";
+        jdbcTemplate.update(sql, mealPlanId);
     }
 
 
